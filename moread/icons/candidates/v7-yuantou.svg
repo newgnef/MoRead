@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    v7 终稿取向：斗只比杆宽一点（不要形成箭头肩），毫尖留圆头（不要收成针）。
+    针尖 + 宽肩 = 箭头；圆尖 + 窄肩 = 毛笔。
+  -->
+  <defs>
+    <linearGradient id="i7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#i7)"/>
+
+  <!-- 杆 -->
+  <rect x="28.3" y="14.5" width="7.4" height="14" rx="3.7" fill="#F8F4EB"/>
+  <!-- 斗：只宽出一点点 -->
+  <rect x="26.8" y="27.5" width="10.4" height="6" rx="2.2" fill="#F8F4EB"/>
+  <!-- 毫：略偏锋，末端收成圆头 -->
+  <path d="M26.8 32.9
+           C27.2 38.6 28.9 43.4 30.6 46.2
+           A1.9 1.9 0 0 0 34.2 45.6
+           C35.6 42.4 36.8 37.6 37.2 32.9 Z"
+        fill="#F8F4EB"/>
+</svg>

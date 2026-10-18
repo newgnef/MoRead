@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- v5：真实毛笔比例（毫 ≈ 2× 斗），整体下移让重心居中 -->
+  <defs>
+    <linearGradient id="i5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#i5)"/>
+  <!-- 笔杆 -->
+  <rect x="28.4" y="15" width="7.2" height="13.5" rx="3.6" fill="#F8F4EB"/>
+  <!-- 笔斗 -->
+  <rect x="25.6" y="27.6" width="12.8" height="6.2" rx="1.8" fill="#F8F4EB"/>
+  <!-- 笔毫 -->
+  <path d="M25.6 33.2 Q26.4 40.6 32 47.6 Q37.6 40.6 38.4 33.2 Z" fill="#F8F4EB"/>
+</svg>

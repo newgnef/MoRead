@@ -1,0 +1,104 @@
+{
+  "checks": [
+    {
+      "name": "3 个标签时排得开，不出现 ⌄",
+      "ok": true,
+      "detail": "count=3 hasMore=false"
+    },
+    {
+      "name": "排得开时标签没被压到最小宽",
+      "ok": true,
+      "detail": "宽度 114.5/121.4/122.8"
+    },
+    {
+      "name": "收缩生效：每个标签都不窄于 100px",
+      "ok": true,
+      "detail": "最窄 100"
+    },
+    {
+      "name": "收缩生效：每个标签都不宽于 220px 上限",
+      "ok": true,
+      "detail": "最宽 100"
+    },
+    {
+      "name": "+ 按钮没被挤出去",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "最后打开的那个标签在视野里",
+      "ok": true,
+      "detail": "active=doc-7.md"
+    },
+    {
+      "name": "12 个标签把标签条撑到溢出",
+      "ok": true,
+      "detail": "scrollW=1222 clientW=694"
+    },
+    {
+      "name": "溢出后出现 ⌄",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "侧栏之外还有标签被推到视野外",
+      "ok": true,
+      "detail": "视野外 6 个：doc-1.md / doc-10.md / doc-11.md / doc-12.md / doc-13.md / doc-14.md"
+    },
+    {
+      "name": "点 ⌄ 弹出溢出菜单",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "菜单条目数 = 视野外的标签数",
+      "ok": true,
+      "detail": "菜单 6 条 / 视野外 6 个"
+    },
+    {
+      "name": "菜单条目就是那几个被挤掉的标签",
+      "ok": true,
+      "detail": "doc-1.md / doc-10.md / doc-11.md / doc-12.md / doc-13.md / doc-14.md"
+    },
+    {
+      "name": "菜单没超出窗口右边缘",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "菜单点选 → 那个标签被激活",
+      "ok": true,
+      "detail": "doc-1.md → doc-1.md"
+    },
+    {
+      "name": "点选后它自己滚进了视野",
+      "ok": true,
+      "detail": "scrollLeft=0"
+    },
+    {
+      "name": "点完菜单自动收起",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "竖向滚轮能横推标签条",
+      "ok": true,
+      "detail": "0 → 160"
+    },
+    {
+      "name": "关掉多余标签后 ⌄ 自动消失",
+      "ok": true,
+      "detail": "剩 1 个，hasMore=false"
+    },
+    {
+      "name": "不溢出时滚动位置归零，不会留下残余偏移",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "shots": [
+    "overflow-980.png",
+    "overflow-menu.png",
+    "overflow-titlebar.png"
+  ]
+}

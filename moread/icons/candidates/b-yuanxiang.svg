@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 B · 圆相砚墨
+    一笔未闭合的圆（禅圆／砚池），缺口在右上，环心一点浓墨。
+    16px 下只剩「环 + 点」两个形，最不容易糊。
+  -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#F8F4EB"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#1F2A24" stroke-width="2.4"/>
+
+  <!-- 起笔在右上留 70° 缺口，顺时针绕一圈 -->
+  <path d="M50.2 28.8A18.5 18.5 0 1 1 35.2 13.8"
+        fill="none" stroke="#1F2A24" stroke-width="5.2" stroke-linecap="round"/>
+
+  <!-- 砚心一点 -->
+  <circle cx="32" cy="36" r="5.2" fill="#2F6B4F"/>
+</svg>

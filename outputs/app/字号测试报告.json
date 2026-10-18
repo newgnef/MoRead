@@ -1,0 +1,152 @@
+{
+  "width": 1000,
+  "total": 29,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "打开文档用于读数",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "默认字号 15px",
+      "ok": true,
+      "detail": "data-fs=15 p=15px"
+    },
+    {
+      "name": "默认缩放系数为 1",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "行高随基准（26px）",
+      "ok": true,
+      "detail": "26px"
+    },
+    {
+      "name": "UI 字号未被阅读域影响",
+      "ok": true,
+      "detail": "侧栏 12px / 标签 12.5px"
+    },
+    {
+      "name": "Ctrl+滚轮向上 → 放大一档",
+      "ok": true,
+      "detail": "data-fs=16 p=16px"
+    },
+    {
+      "name": "连滚两格继续放大",
+      "ok": true,
+      "detail": "data-fs=18"
+    },
+    {
+      "name": "标题 / 引用 / 代码一起按比例放大",
+      "ok": true,
+      "detail": "h2=27.6 引用=18.6 代码=15"
+    },
+    {
+      "name": "放大后 UI 一个像素都没变",
+      "ok": true,
+      "detail": "标签 12.5px 侧栏 12px 标签高 30"
+    },
+    {
+      "name": "阅读列宽不跟着变（只放大字，不放大版心）",
+      "ok": true,
+      "detail": "680 → 680"
+    },
+    {
+      "name": "Ctrl+滚轮向下 → 缩小一档",
+      "ok": true,
+      "detail": "data-fs=17"
+    },
+    {
+      "name": "放大封顶在 22px",
+      "ok": true,
+      "detail": "data-fs=22"
+    },
+    {
+      "name": "面板里放大的按钮在封顶时禁用",
+      "ok": true,
+      "detail": "{\"n\":2,\"plus\":true,\"minus\":false}"
+    },
+    {
+      "name": "面板显示当前字号",
+      "ok": true,
+      "detail": "22px"
+    },
+    {
+      "name": "面板 A− 生效并同步数值",
+      "ok": true,
+      "detail": "data-fs=21 显示=21px"
+    },
+    {
+      "name": "点数字复位到 15px",
+      "ok": true,
+      "detail": "data-fs=15"
+    },
+    {
+      "name": "面板里写了 Ctrl+滚轮的提示",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Ctrl+= 放大",
+      "ok": true,
+      "detail": "data-fs=16"
+    },
+    {
+      "name": "Ctrl+- 缩小",
+      "ok": true,
+      "detail": "data-fs=14"
+    },
+    {
+      "name": "Ctrl+0 复位 15px",
+      "ok": true,
+      "detail": "data-fs=15"
+    },
+    {
+      "name": "刷新后仍是上次的字号",
+      "ok": true,
+      "detail": "data-fs=18 p=18px"
+    },
+    {
+      "name": "首帧脚本已把字号写进 DOM（不会先小后大）",
+      "ok": true,
+      "detail": "{\"attr\":\"18\",\"inline\":\"1.2\"}"
+    },
+    {
+      "name": "长文档已打开（走虚拟滚动）",
+      "ok": true,
+      "detail": "ok:2832"
+    },
+    {
+      "name": "长文档字号真的到 20px",
+      "ok": true,
+      "detail": "data-fs=20"
+    },
+    {
+      "name": "段落行高按比例走（26 × 20/15 ≈ 34.7）",
+      "ok": true,
+      "detail": "34.6667px"
+    },
+    {
+      "name": "块结构没被字号改动破坏",
+      "ok": true,
+      "detail": "2832 → 2832"
+    },
+    {
+      "name": "全文总高随之变大（不是只有视口内变了）",
+      "ok": true,
+      "detail": "408923 → 460260"
+    },
+    {
+      "name": "阅读位置没被弹走（漂移 ≤ 3 块）",
+      "ok": true,
+      "detail": "第 1282 → 第 1283 块"
+    },
+    {
+      "name": "虚拟滚动仍然只渲染视野附近",
+      "ok": true,
+      "detail": "DOM 块 15"
+    }
+  ]
+}

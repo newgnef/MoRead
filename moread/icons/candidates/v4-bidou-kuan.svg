@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- v4：杆加粗、斗收窄，结构与 v3 相同但为 16px 让路 -->
+  <defs>
+    <linearGradient id="i4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#i4)"/>
+  <rect x="28.6" y="9.5" width="6.8" height="14" rx="3.4" fill="#F8F4EB"/>
+  <rect x="25.6" y="22" width="12.8" height="6.4" rx="1.8" fill="#F8F4EB"/>
+  <path d="M25.6 27.8 Q26.6 39.2 32 47.8 Q37.4 39.2 38.4 27.8 Z" fill="#F8F4EB"/>
+</svg>

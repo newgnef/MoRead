@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- v3：带笔斗（杆细、斗宽、毫收尖）-->
+  <defs>
+    <linearGradient id="i3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#i3)"/>
+  <!-- 笔杆 -->
+  <rect x="29.4" y="10.5" width="5.2" height="14" rx="2.6" fill="#F8F4EB"/>
+  <!-- 笔斗 -->
+  <rect x="26.4" y="22.5" width="11.2" height="6.4" rx="2" fill="#F8F4EB"/>
+  <!-- 笔毫 -->
+  <path d="M26.4 28.4 Q27.2 39.6 32 47.6 Q36.8 39.6 37.6 28.4 Z" fill="#F8F4EB"/>
+</svg>

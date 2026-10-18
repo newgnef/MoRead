@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    book13 · 书脊缝拉长收细（3.6 × 14.6），两翼再抬高一点。
+    缝短而粗会像一根黑棒；书上那道凹槽本来就该是细长的。
+  -->
+  <defs>
+    <linearGradient id="bk13" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+    <linearGradient id="pg13" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#FDFAF3"/>
+      <stop offset="1" stop-color="#EBE3D1"/>
+    </linearGradient>
+    <linearGradient id="sh13L" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFDF7" stop-opacity="0"/>
+      <stop offset="1" stop-color="#6B5C3E" stop-opacity="0.24"/>
+    </linearGradient>
+    <linearGradient id="sh13R" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6B5C3E" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#FFFDF7" stop-opacity="0"/>
+    </linearGradient>
+
+    <path id="bk13shape" d="M32 27.4
+           C27.6 22.8 20.2 17.2 14.9 16.2
+           Q 10.9 15.4 10.9 18.8
+           L11.8 37.6
+           C12.1 40.5 13.8 41.8 16.5 42.3
+           C22.2 43.2 28.5 44.2 32 46.0
+           C35.5 44.2 41.8 43.2 47.5 42.3
+           C50.2 41.8 51.9 40.5 52.2 37.6
+           L53.1 18.8
+           Q 53.1 15.4 49.1 16.2
+           C43.8 17.2 36.4 22.8 32 27.4
+           Z"/>
+    <clipPath id="bk13clip"><use href="#bk13shape"/></clipPath>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#bk13)"/>
+  <use href="#bk13shape" fill="url(#pg13)"/>
+
+  <g clip-path="url(#bk13clip)">
+    <rect x="26.0" y="13" width="6.0" height="35" fill="url(#sh13L)"/>
+    <rect x="38.0" y="13" width="6.0" height="35" fill="url(#sh13R)"/>
+  </g>
+
+  <use href="#bk13shape" fill="none" stroke="#DCD1B9" stroke-width="0.9" stroke-opacity="0.85"/>
+
+  <path d="M32 27.8 V 42.2"
+        stroke="#1B3A2C" stroke-width="3.6" stroke-linecap="round"/>
+</svg>

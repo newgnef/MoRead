@@ -1,0 +1,40 @@
+[package]
+name = "moread"
+version = "0.1.0"
+description = "MoRead · Windows 只读 Markdown 阅读器"
+authors = ["杨文锋"]
+edition = "2021"
+# Tauri 2 最低要求
+rust-version = "1.77.2"
+
+[lib]
+# Tauri 2 的标准结构：业务放在 lib，main.rs 只做入口
+name = "moread_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# tray-icon：右下角系统托盘。关窗只收起到托盘，退出走托盘菜单
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-log = "2"
+tauri-plugin-store = "2"
+# 单实例：托盘应用如果允许开第二份，会出现两个托盘图标、两份内存
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# 目录监听：外部编辑器保存文件后自动重载，用的是各平台原生后端
+notify = "6"
+# 编码兜底：中文环境下 GBK/GB18030 编码的 Markdown 并不罕见
+encoding_rs = "0.8"
+# 日志门面：tauri-plugin-log 负责落地，这里只写调用点
+log = "0.4"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    book4 · 深谷：书脊处的 V 形谷下压到 26.8，外角抬到 17.4，落差 9.4 单位
+    （16px 下约 2.3px）。这个落差是缩小后唯一还认得出的「张开」信息。
+    中缝加宽到 4.2 并顶到谷尖，不再留白帽把谷填平。
+  -->
+  <defs>
+    <linearGradient id="bk4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+    <linearGradient id="pg4" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#FDFAF3"/>
+      <stop offset="1" stop-color="#EBE3D1"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#bk4)"/>
+
+  <path d="M32 26.8
+           C28.0 22.6 20.4 17.6 15.4 17.4
+           C13.4 17.4 12.4 18.5 12.4 20.4
+           L12.4 38.6
+           C12.4 41.4 13.8 42.7 16.4 43.1
+           C22.0 44.0 28.4 45.0 32 46.8
+           C35.6 45.0 42.0 44.0 47.6 43.1
+           C50.2 42.7 51.6 41.4 51.6 38.6
+           L51.6 20.4
+           C51.6 18.5 50.6 17.4 48.6 17.4
+           C43.6 17.6 36.0 22.6 32 26.8
+           Z"
+        fill="url(#pg4)"/>
+
+  <path d="M32 27.4 V 43.0"
+        stroke="#1E3F30" stroke-width="4.2" stroke-linecap="round"/>
+</svg>

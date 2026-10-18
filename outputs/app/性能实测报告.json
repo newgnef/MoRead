@@ -1,0 +1,120 @@
+{
+  "app": "http://127.0.0.1:1420/?ws=C:/Users/LS/AppData/Local/Temp/moread-bigdocs",
+  "at": "2026-10-16T12:26:42.906Z",
+  "runs": [
+    {
+      "label": "虚拟滚动（默认）",
+      "openMs": 4560,
+      "nodes": 188,
+      "renderedBlocks": 16,
+      "scrollHeight": 1748076,
+      "virtual": true,
+      "highlighted": 2,
+      "pendingCode": 0,
+      "inner": {
+        "useVirtual": true,
+        "blocks": 14095,
+        "range": {
+          "start": 0,
+          "end": 16
+        },
+        "totalHeight": 1748067.1913763648,
+        "renderedEls": 16,
+        "measured": 17,
+        "calibrated": true,
+        "atBottom": false,
+        "paint": {
+          "rounds": 2,
+          "lastRemaining": 0,
+          "error": null,
+          "ready": true,
+          "lastError": null
+        },
+        "pendingCode": 0,
+        "shikiBlocks": 2,
+        "lastReveal": null,
+        "scrollTop": 0,
+        "viewHeight": 721
+      },
+      "scroll": {
+        "frames": 89,
+        "medianMs": 16.9,
+        "p95Ms": 19.1,
+        "worstMs": 22.1,
+        "fpsFromMedian": 59.2,
+        "renderedBlocks": 12,
+        "scrollHeight": 1753012,
+        "reachedEnd": true,
+        "lastSectionVisible": 2013,
+        "nodes": 203
+      },
+      "outline": {
+        "ok": true,
+        "label": "第 1208 节 · 生产计划汇总",
+        "delta": 19.6,
+        "renderedBlocks": 20,
+        "outlineCount": 4028
+      }
+    },
+    {
+      "label": "全量渲染（?novirtual=1）",
+      "openMs": 4556,
+      "nodes": 76240,
+      "renderedBlocks": 14095,
+      "scrollHeight": 1735465,
+      "virtual": false,
+      "highlighted": 60,
+      "pendingCode": 1953,
+      "inner": {
+        "useVirtual": false,
+        "blocks": 14095,
+        "range": {
+          "start": 0,
+          "end": 24
+        },
+        "totalHeight": 1568348,
+        "renderedEls": 14095,
+        "measured": 0,
+        "calibrated": false,
+        "atBottom": false,
+        "paint": {
+          "rounds": 10,
+          "lastRemaining": 1953,
+          "error": null,
+          "ready": true,
+          "lastError": null
+        },
+        "pendingCode": 1953,
+        "shikiBlocks": 60,
+        "lastReveal": null,
+        "scrollTop": 0,
+        "viewHeight": 721
+      },
+      "scroll": {
+        "frames": 89,
+        "medianMs": 153.9,
+        "p95Ms": 189.9,
+        "worstMs": 416.9,
+        "fpsFromMedian": 6.5,
+        "renderedBlocks": 14095,
+        "scrollHeight": 1735465,
+        "reachedEnd": true,
+        "lastSectionVisible": 2013,
+        "nodes": 93545
+      },
+      "outline": {
+        "ok": true,
+        "label": "第 1208 节 · 生产计划汇总",
+        "delta": 20,
+        "renderedBlocks": 14095,
+        "outlineCount": 4028
+      }
+    }
+  ],
+  "summary": {
+    "nodeRatio": 405.53,
+    "blockRatio": 880.94,
+    "fpsSpeedup": 9.11,
+    "tailReachable": true
+  }
+}

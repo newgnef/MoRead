@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MoRead 设计规范 v1.2</title>
+<style>
+/* ============================================================
+   本页自带 MoRead 令牌 —— 规范页本身就是令牌的活体演示
+   ============================================================ */
+:root{
+  --mr-chrome:#F4F0E8; --mr-canvas:#FBFAF7; --mr-surface:#FFFFFF;
+  --mr-surface-code:#F5F2EA; --mr-surface-tint:#F1EDE4; --mr-surface-track:#E9E4D9;
+  --mr-border:#E5DFD0; --mr-border-soft:#EFECE6; --mr-border-strong:#D4CCB5;
+  --mr-text-1:#1F1E1B; --mr-text-2:#3A3833; --mr-text-3:#5C5A55;
+  --mr-text-4:#8A8578; --mr-text-5:#938D80; --mr-text-6:#A39D8F;
+  --mr-accent:#2F6B4F; --mr-accent-strong:#245B41; --mr-accent-soft:#E3E9DE;
+  --mr-accent-armor:#DCE4D8; --mr-bronze:#B89968; --mr-warn-bg:#FBF0DC; --mr-warn:#B89968;
+  --mr-font-sans:"Noto Sans SC",system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+  --mr-font-serif:"Source Han Serif CN","Noto Serif SC",Georgia,"Songti SC",serif;
+  --mr-font-mono:"JetBrains Mono","Cascadia Code",Consolas,"Courier New",monospace;
+  --mr-font-latin:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r-sm:4px; --r-md:6px; --r-lg:8px;
+}
+[data-theme="dark"]{
+  --mr-chrome:#141413; --mr-canvas:#1C1B19; --mr-surface:#2A2825;
+  --mr-surface-code:#232220; --mr-surface-tint:#232220; --mr-surface-track:#201F1C;
+  --mr-border:#302E29; --mr-border-soft:#262521; --mr-border-strong:#3A3833;
+  --mr-text-1:#EDE9E1; --mr-text-2:#C9C4BB; --mr-text-3:#A9A49A;
+  --mr-text-4:#8A8578; --mr-text-5:#7A756C; --mr-text-6:#6E6963;
+  --mr-accent:#7FB894; --mr-accent-strong:#9CCBAB; --mr-accent-soft:#26332A;
+  --mr-accent-armor:#2E3A32; --mr-bronze:#C8A876; --mr-warn-bg:#2E2519; --mr-warn:#C8A876;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--mr-chrome); color:var(--mr-text-1);
+  font-family:var(--mr-font-sans); font-size:15px; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- 顶栏 ---------- */
+.topbar{
+  position:sticky; top:0; z-index:20; height:56px;
+  display:flex; align-items:center; gap:14px; padding:0 26px;
+  background:var(--mr-chrome); border-bottom:1px solid var(--mr-border);
+}
+.topbar__mark{
+  width:22px; height:22px; border-radius:var(--r-sm);
+  border:1.8px solid var(--mr-accent); position:relative; flex:none;
+}
+.topbar__mark::before,.topbar__mark::after{
+  content:''; position:absolute; left:5px; right:5px; height:1.8px;
+  background:var(--mr-accent); border-radius:2px;
+}
+.topbar__mark::before{top:7px}
+.topbar__mark::after{top:12px; right:9px}
+.topbar__title{font-size:14px; font-weight:500; color:var(--mr-text-3); letter-spacing:.01em}
+.topbar__spacer{flex:1}
+.seg{display:flex; gap:2px; padding:3px; background:var(--mr-surface-track); border-radius:var(--r-md)}
+.seg button{
+  border:0; background:none; cursor:pointer; color:var(--mr-text-3);
+  font:400 11.5px var(--mr-font-sans); padding:4px 12px; height:24px;
+  border-radius:var(--r-sm); line-height:1;
+}
+.seg button[aria-pressed="true"]{background:var(--mr-surface); color:var(--mr-text-1); font-weight:500}
+/* ---------- 布局 ---------- */
+.wrap{max-width:1280px; margin:0 auto; padding:0 26px; display:grid; grid-template-columns:216px minmax(0,1fr); gap:52px; align-items:start}
+aside{position:sticky; top:56px; max-height:calc(100vh - 56px); overflow-y:auto; padding:30px 0 60px}
+aside .nav-t{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mr-text-6); font-weight:600; margin-bottom:10px}
+nav a{display:block; padding:4px 0 4px 13px; margin-left:-1px; border-left:2px solid transparent; color:var(--mr-text-3); text-decoration:none; font-size:13px}
+nav a:hover{color:var(--mr-accent); border-left-color:var(--mr-accent)}
+nav a.sub{padding-left:25px; font-size:12.5px; color:var(--mr-text-4)}
+main{padding-bottom:100px; min-width:0}
+/* ---------- 区块 ---------- */
+h1{font:700 34px/44px var(--mr-font-serif); margin:44px 0 10px; letter-spacing:-.01em}
+.lede{color:var(--mr-text-3); font-size:15px; margin:0 0 14px; max-width:64ch}
+h2{font:600 24px/32px var(--mr-font-serif); margin:56px 0 6px; padding-top:8px; scroll-margin-top:70px}
+h2 .num{color:var(--mr-accent); font:700 22px/1 var(--mr-font-sans); margin-right:10px}
+h3{font-size:15px; font-weight:500; margin:30px 0 10px; color:var(--mr-text-1); scroll-margin-top:70px}
+h4{font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--mr-text-5); margin:22px 0 10px}
+p{color:var(--mr-text-2); margin:10px 0}
+.hr{height:1px; background:var(--mr-border); margin:34px 0; border:0}
+/* ---------- 色板 ---------- */
+.swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(252px,1fr)); gap:14px; margin:16px 0 8px}
+.sw{border:1px solid var(--mr-border); border-radius:var(--r-lg); overflow:hidden; background:var(--mr-surface)}
+.sw__pair{display:flex; height:56px}
+.sw__pair > div{flex:1; position:relative; box-shadow:inset 0 0 0 1px rgba(128,120,105,.16)}
+.sw__pair > div + div{border-left:1px solid var(--mr-border)}
+.sw__pair > div::after{content:attr(data-lbl); position:absolute; left:7px; bottom:5px; font:400 9.5px var(--mr-font-mono); color:rgba(128,120,105,.85)}
+.sw__meta{padding:9px 12px 11px; border-top:1px solid var(--mr-border-soft)}
+.sw__name{font:500 12.5px var(--mr-font-mono); color:var(--mr-text-1)}
+.sw__hex{font:400 11px var(--mr-font-mono); color:var(--mr-text-5); margin-top:2px}
+.sw__use{font-size:11.5px; color:var(--mr-text-3); margin-top:5px; line-height:1.5}
+/* ---------- 主题族：浅/深并排的小色板 ---------- */
+.pv{display:inline-flex; border-radius:3px; overflow:hidden; vertical-align:-3px; box-shadow:0 0 0 1px rgba(128,120,105,.22)}
+.pv i{display:block; width:24px; height:14px}
+.pv i + i{border-left:1px solid rgba(128,120,105,.30)}
+/* ---------- 文字阶梯 ---------- */
+.scale{border:1px solid var(--mr-border); border-radius:var(--r-lg); overflow:hidden; background:var(--mr-surface); margin:16px 0}
+.scale__row{display:grid; grid-template-columns:190px minmax(0,1fr); gap:20px; align-items:baseline; padding:14px 18px; border-bottom:1px solid var(--mr-border-soft)}
+.scale__row:last-child{border-bottom:0}
+.scale__spec{font:400 11px var(--mr-font-mono); color:var(--mr-text-5); line-height:1.8}
+.scale__spec b{display:block; font:500 12.5px var(--mr-font-mono); color:var(--mr-text-1)}
+/* ---------- 表格 ---------- */
+.tbl{border:1px solid var(--mr-border); border-radius:var(--r-md); overflow:hidden; background:var(--mr-surface); margin:14px 0}
+.tbl table{width:100%; border-collapse:collapse; font-size:13px}
+.tbl th{background:var(--mr-surface-tint); color:var(--mr-text-3); font-weight:500; font-size:11.5px; text-align:left; letter-spacing:.02em}
+.tbl th,.tbl td{padding:9px 14px; border-bottom:1px solid var(--mr-border-soft); vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td{color:var(--mr-text-2)}
+.tbl code{font:400 12px var(--mr-font-mono); background:var(--mr-surface-code); padding:1px 5px; border-radius:var(--r-sm)}
+/* ---------- 间距可视化 ---------- */
+.sp-list{display:flex; flex-direction:column; gap:7px; margin:14px 0}
+/* 四列，和 .sp 里的四个 span 一一对应：令牌名 / 值 / 长度条 / 用途 */
+.sp{display:grid; grid-template-columns:78px 44px minmax(0,240px) minmax(0,1fr); gap:14px; align-items:center}
+.sp__v{font:400 11.5px var(--mr-font-mono); color:var(--mr-text-5)}
+.sp__bar{height:14px; background:var(--mr-accent-soft); border-left:2px solid var(--mr-accent); border-radius:2px}
+.sp__u{font-size:11.5px; color:var(--mr-text-4)}
+/* ---------- 圆角 / 阴影 ---------- */
+.tiles{display:flex; gap:14px; flex-wrap:wrap; margin:14px 0}
+.tile{width:112px; height:76px; background:var(--mr-surface); border:1px solid var(--mr-border-strong); display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; font:400 10.5px var(--mr-font-mono); color:var(--mr-text-5)}
+/* ---------- 组件演示 ---------- */
+.demo{border:1px solid var(--mr-border); border-radius:var(--r-lg); background:var(--mr-canvas); padding:22px; margin:14px 0; display:flex; flex-wrap:wrap; gap:14px; align-items:center}
+.demo--col{flex-direction:column; align-items:stretch; gap:10px}
+.demo__cap{width:100%; font:500 11px var(--mr-font-mono); color:var(--mr-text-5); margin-bottom:4px}
+.btn{height:38px; padding:0 18px; border-radius:var(--r-md); font:500 13px var(--mr-font-sans); display:inline-flex; align-items:center; gap:8px; border:1px solid transparent}
+.btn--primary{background:var(--mr-accent); color:#fff}
+.btn--primary:hover{background:var(--mr-accent-strong)}
+.btn--secondary{background:transparent; border-color:var(--mr-border-strong); color:var(--mr-text-2)}
+.btn--secondary:hover{background:var(--mr-surface-track)}
+.btn--text{color:var(--mr-accent); padding:0 4px}
+.btn--disabled{background:var(--mr-accent); color:#fff; opacity:.4; cursor:not-allowed}
+.btn svg{width:15px;height:15px}
+/* 窗口标签 */
+.tabstrip{display:flex; gap:2px; align-items:center; background:var(--mr-chrome); padding:5px 8px; border-radius:var(--r-md); border:1px solid var(--mr-border)}
+.wtab{height:30px; padding:0 10px; border-radius:var(--r-md); display:inline-flex; align-items:center; gap:6px; font:500 12.5px var(--mr-font-sans); color:var(--mr-text-3)}
+.wtab--active{background:var(--mr-surface); color:var(--mr-text-1)}
+.wtab:hover:not(.wtab--active){background:var(--mr-surface-track)}
+.wtab svg{width:13px;height:13px}
+/* 侧栏分段 */
+.sbtabs{display:flex; gap:2px; padding:3px; background:var(--mr-surface-track); border-radius:var(--r-md); width:220px}
+.sbtab{flex:1; height:24px; border-radius:var(--r-sm); display:inline-flex; align-items:center; justify-content:center; font:400 12px var(--mr-font-sans); color:var(--mr-text-3)}
+.sbtab--active{background:var(--mr-surface); color:var(--mr-text-1); font-weight:500}
+/* 树行 */
+.tree{width:260px; background:var(--mr-chrome); border:1px solid var(--mr-border); border-radius:var(--r-md); padding:8px; display:flex; flex-direction:column; gap:2px}
+.trow{height:28px; border-radius:var(--r-sm); display:flex; align-items:center; gap:7px; padding:0 8px 0 14px; font:400 12.5px var(--mr-font-sans); color:var(--mr-text-2)}
+.trow svg{width:13px;height:13px;flex:none}
+.trow--hover{background:var(--mr-surface-track)}
+.trow--sel{background:var(--mr-accent-soft); color:var(--mr-accent); font-weight:500}
+.trow--gone{color:var(--mr-text-6); text-decoration:line-through}
+/* 表单控件 */
+.ctrl{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.toggle{width:38px;height:21px;border-radius:11px;position:relative;background:var(--mr-accent)}
+.toggle--off{background:var(--mr-border-strong)}
+.toggle--disabled{opacity:.4}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#fff;transition:left 120ms}
+.toggle:not(.toggle--off)::after{left:20px}
+.stepper{display:inline-flex; align-items:center; height:30px; border:1px solid var(--mr-border-strong); border-radius:var(--r-md); overflow:hidden}
+.stepper span{width:28px;height:28px;display:grid;place-items:center;color:var(--mr-text-3);cursor:pointer}
+.stepper span:hover{background:var(--mr-surface-track)}
+.stepper b{width:54px;text-align:center;font:400 12px var(--mr-font-mono);color:var(--mr-text-1)}
+.input{display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;background:var(--mr-surface);border:1px solid var(--mr-border-strong);border-radius:var(--r-md);width:220px;font:500 12.5px var(--mr-font-sans);color:var(--mr-text-1)}
+.input svg{width:13px;height:13px;flex:none}
+.input--focus{border-color:var(--mr-accent);box-shadow:0 0 0 2px var(--mr-accent-soft)}
+/* 开关行 / 设置行 */
+.srow{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 18px;background:var(--mr-surface);border-bottom:1px solid var(--mr-border-soft)}
+.srow:last-child{border-bottom:0}
+.srow__col{display:flex;flex-direction:column;gap:3px}
+.srow__l{font:500 13px var(--mr-font-sans);color:var(--mr-text-1)}
+.srow__d{font-size:11.5px;color:var(--mr-text-5)}
+/* 搜索命中 */
+.hit{padding:8px;border-radius:var(--r-sm);display:flex;flex-direction:column;gap:5px;background:var(--mr-surface);border:1px solid var(--mr-border-soft)}
+.hit--sel{background:var(--mr-accent-soft);border-color:transparent}
+.hit__h{display:flex;align-items:center;gap:6px}
+.hit__h svg{width:12px;height:12px}
+.hit__n{font:500 12px var(--mr-font-sans);color:var(--mr-text-1)}
+.hit__s{font-size:11.5px;color:var(--mr-text-3);line-height:1.45}
+/* Markdown 演示件 */
+.md{width:100%}
+.md h1{font:700 30px/38px var(--mr-font-serif);margin:0 0 12px}
+.md h2{font:600 20px/28px var(--mr-font-serif);margin:20px 0 8px}
+.md p{font-size:14.5px;line-height:1.75;color:var(--mr-text-2);margin:0 0 12px;max-width:60ch}
+.md code{font:400 12.5px var(--mr-font-mono);background:var(--mr-surface-code);padding:1px 5px;border-radius:var(--r-sm)}
+.md a{color:var(--mr-accent);text-decoration:none;border-bottom:1px solid var(--mr-accent-soft)}
+.codeblock{background:var(--mr-surface-code);border:1px solid var(--mr-border);border-radius:var(--r-md);overflow:hidden;margin:12px 0}
+.codeblock__head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 8px 14px;border-bottom:1px solid var(--mr-border);font:400 11px var(--mr-font-mono);color:var(--mr-text-4)}
+.codeblock__body{padding:10px 14px 14px;font:400 12.5px/20px var(--mr-font-mono);white-space:pre;overflow-x:auto;color:var(--mr-text-1)}
+.codeblock__body .c{color:var(--mr-text-4)}
+.codeblock__body .v{color:var(--mr-accent-strong)}
+.mtable{border:1px solid var(--mr-border);border-radius:var(--r-md);overflow:hidden;margin:12px 0}
+.mtable table{width:100%;border-collapse:collapse;font-size:13px}
+.mtable th{background:var(--mr-surface-tint);color:var(--mr-text-3);font-weight:500;font-size:11.5px;text-align:left}
+.mtable th,.mtable td{padding:9px 14px;border-bottom:1px solid var(--mr-border-soft)}
+.mtable tr:last-child td{border-bottom:0}
+.mtable td{color:var(--mr-text-2);font-size:12.5px}
+.mquote{background:var(--mr-surface-tint);border:1px solid var(--mr-accent-armor);border-radius:var(--r-md);padding:13px 17px;font:400 14.5px/1.75 var(--mr-font-serif);color:var(--mr-text-2);margin:12px 0}
+.tasks{list-style:none;padding:0;margin:12px 0;display:flex;flex-direction:column;gap:8px}
+.tasks li{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--mr-text-2)}
+.box{width:15px;height:15px;border:1.6px solid var(--mr-border-strong);border-radius:4px;flex:none;display:grid;place-items:center}
+.box--done{background:var(--mr-accent);border-color:var(--mr-accent)}
+.box--done::after{content:'';width:7px;height:4px;border-left:1.8px solid #fff;border-bottom:1.8px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+/* 三态 */
+.states{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0}
+.state{border:1px solid var(--mr-border);border-radius:var(--r-lg);background:var(--mr-surface);padding:20px;text-align:center}
+.state__t{font:500 13px var(--mr-font-sans);color:var(--mr-text-1);margin-bottom:5px}
+.state__d{font-size:11.5px;color:var(--mr-text-5)}
+.skel{height:11px;border-radius:4px;background:var(--mr-surface-track);margin:7px 0}
+/* 对比度 */
+.cr{display:inline-block;font:400 11px var(--mr-font-mono);padding:1px 7px;border-radius:var(--r-full,999px);background:var(--mr-accent-soft);color:var(--mr-accent-strong)}
+.cr--low{background:var(--mr-warn-bg);color:var(--mr-warn)}
+/* 禁止项 */
+.dont{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin:14px 0}
+.dont__i{border:1px solid var(--mr-border);border-left:3px solid var(--mr-warn);border-radius:0 var(--r-md) var(--r-md) 0;background:var(--mr-surface);padding:12px 16px}
+.dont__t{font:500 12.5px var(--mr-font-sans);color:var(--mr-text-1);margin-bottom:3px}
+.dont__d{font-size:11.5px;color:var(--mr-text-3);line-height:1.55}
+.note{border-left:3px solid var(--mr-accent);background:var(--mr-accent-soft);border-radius:0 var(--r-md) var(--r-md) 0;padding:12px 16px;margin:16px 0;font-size:13px;color:var(--mr-text-2)}
+.note b{color:var(--mr-text-1)}
+footer{border-top:1px solid var(--mr-border);margin-top:60px;padding:22px 0;font-size:12px;color:var(--mr-text-5)}
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr;gap:0}
+  aside{position:static;max-height:none;padding-bottom:0}
+  nav{display:none}
+  .scale__row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar__mark"></div>
+  <div class="topbar__title">MoRead 设计规范 · v1.2</div>
+  <div class="topbar__spacer"></div>
+  <div class="seg" role="group" aria-label="主题切换">
+    <button type="button" data-theme-btn="light" aria-pressed="true">浅色</button>
+    <button type="button" data-theme-btn="dark" aria-pressed="false">深色</button>
+  </div>
+</div>
+
+<div class="wrap">
+<aside>
+  <div class="nav-t">令牌目录</div>
+  <nav>
+    <a href="#c">1 · 色彩</a>
+    <a href="#c-surface" class="sub">表面与描边</a>
+    <a href="#c-text" class="sub">文字阶梯</a>
+    <a href="#c-accent" class="sub">强调色</a>
+    <a href="#c-palette" class="sub">主题族</a>
+    <a href="#t">2 · 字体</a>
+    <a href="#t-family" class="sub">字体族</a>
+    <a href="#t-scale" class="sub">字号阶梯</a>
+    <a href="#t-scalable" class="sub">字号可调</a>
+    <a href="#sp">3 · 间距 / 圆角 / 阴影</a>
+    <a href="#layout">4 · 布局常量</a>
+    <a href="#comp">5 · 组件规范</a>
+    <a href="#comp-md" class="sub">Markdown 渲染件</a>
+    <a href="#comp-state" class="sub">三态规范</a>
+    <a href="#a11y">6 · 无障碍</a>
+    <a href="#dont">7 · 禁止项</a>
+  </nav>
+</aside>
+
+<main>
+  <h1>MoRead 设计规范</h1>
+  <p class="lede">一个只读 Markdown 阅读器的完整视觉系统。所有值都已落成 CSS 变量，<code>tokens.css</code> 直接引入即可用；本页本身就是这些令牌的活体演示——右上角切主题，看到的每个颜色都是真实令牌。</p>
+  <div class="note"><b>核心立场：</b>阅读器的装饰每多一分，读者的注意力就少一分。所以这套系统里<strong>没有阴影、没有渐变、没有大圆角、没有高饱和色</strong>，全靠 1px 细线、六级灰阶和一个墨绿强调色撑起层级。</div>
+
+  <!-- ============ 1 色彩 ============ -->
+  <h2 id="c"><span class="num">1</span>色彩</h2>
+  <p>每个色板左半为浅色值、右半为深色值，下方两行分别标注。深色不是「浅色反相」，而是重新调过的一套暖墨色——底色偏暖、强调色提亮，保证正文对比度仍达 9:1 以上。</p>
+
+  <h3 id="c-surface">1.1 表面与描边</h3>
+  <div class="swatches">
+    <div class="sw"><div class="sw__pair"><div style="background:#F4F0E8" data-lbl="L"></div><div style="background:#141413" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-chrome</div><div class="sw__hex">#F4F0E8 · #141413</div><div class="sw__use">窗口底、侧栏底</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#FBFAF7" data-lbl="L"></div><div style="background:#1C1B19" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-canvas</div><div class="sw__hex">#FBFAF7 · #1C1B19</div><div class="sw__use">阅读画布。比纯白低 3% 亮度，长读不刺眼</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#FFFFFF" data-lbl="L"></div><div style="background:#2A2825" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-surface</div><div class="sw__hex">#FFFFFF · #2A2825</div><div class="sw__use">激活标签、卡片、列表面板</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#F5F2EA" data-lbl="L"></div><div style="background:#232220" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-surface-code</div><div class="sw__hex">#F5F2EA · #232220</div><div class="sw__use">代码块、行内码底</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#F1EDE4" data-lbl="L"></div><div style="background:#232220" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-surface-tint</div><div class="sw__hex">#F1EDE4 · #232220</div><div class="sw__use">表头、引用块底</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#E9E4D9" data-lbl="L"></div><div style="background:#201F1C" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-surface-track</div><div class="sw__hex">#E9E4D9 · #201F1C</div><div class="sw__use">分段控件轨道、行悬停底</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#E5DFD0" data-lbl="L"></div><div style="background:#302E29" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-border</div><div class="sw__hex">#E5DFD0 · #302E29</div><div class="sw__use">主分隔线（替代阴影承担全部层级）</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#EFECE6" data-lbl="L"></div><div style="background:#262521" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-border-soft</div><div class="sw__hex">#EFECE6 · #262521</div><div class="sw__use">组内分隔（设置项、表格行）</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#D4CCB5" data-lbl="L"></div><div style="background:#3A3833" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-border-strong</div><div class="sw__hex">#D4CCB5 · #3A3833</div><div class="sw__use">可交互控件描边（按钮、输入、步进器）</div></div></div>
+  </div>
+
+  <h3 id="c-text">1.2 文字阶梯（六级）</h3>
+  <p>六级灰阶覆盖从标题到时间戳的全部场景。<strong>正文只能用 1–3 级</strong>；4–6 级仅限图标、注释、装饰性元信息。</p>
+  <div class="scale">
+    <div class="scale__row">
+      <div class="scale__spec"><b>--mr-text-1</b>#1F1E1B / #EDE9E1<br>对比度 <span class="cr">16.0:1 ／ 14.2:1</span></div>
+      <div style="color:var(--mr-text-1);font:500 20px/28px var(--mr-font-sans)">文档标题、主标签、当前项</div>
+    </div>
+    <div class="scale__row">
+      <div class="scale__spec"><b>--mr-text-2</b>#3A3833 / #C9C4BB<br>对比度 <span class="cr">11.3:1 ／ 9.9:1</span></div>
+      <div style="color:var(--mr-text-2);font:400 17px/26px var(--mr-font-sans)">正文。这是屏幕上出现最多的颜色</div>
+    </div>
+    <div class="scale__row">
+      <div class="scale__spec"><b>--mr-text-3</b>#5C5A55 / #A9A49A<br>对比度 <span class="cr">6.6:1 ／ 6.9:1</span></div>
+      <div style="color:var(--mr-text-3);font:400 15px/24px var(--mr-font-sans)">次级标签、引用文、搜索片段</div>
+    </div>
+    <div class="scale__row">
+      <div class="scale__spec"><b>--mr-text-4</b>#8A8578 / #8A8578<br>对比度 <span class="cr cr--low">3.5:1 ／ 4.7:1</span></div>
+      <div style="color:var(--mr-text-4);font:400 14px/22px var(--mr-font-sans)">图标描边、代码注释、未激活标签</div>
+    </div>
+    <div class="scale__row">
+      <div class="scale__spec"><b>--mr-text-5</b>#938D80 / #7A756C<br>对比度 <span class="cr cr--low">3.2:1 ／ 3.8:1</span></div>
+      <div style="color:var(--mr-text-5);font:400 14px/22px var(--mr-font-sans)">字段描述、路径、说明性元信息</div>
+    </div>
+    <div class="scale__row">
+      <div class="scale__spec"><b>--mr-text-6</b>#A39D8F / #6E6963<br>对比度 <span class="cr cr--low">2.6:1 ／ 2.9:1</span></div>
+      <div style="color:var(--mr-text-6);font:400 14px/22px var(--mr-font-sans)">时间戳、禁用态、装饰性小图标</div>
+    </div>
+  </div>
+
+  <h3 id="c-accent">1.3 强调色</h3>
+  <p>没有用常规的蓝色链接色。选了<strong>松墨绿</strong>——贴合「墨读」的纸质调性，且在暖纸底上对比度 6.1:1 达标 AA，在深色底上 7.5:1。每个界面只允许出现一个强调色，不叠加第二个。</p>
+  <div class="swatches">
+    <div class="sw"><div class="sw__pair"><div style="background:#2F6B4F" data-lbl="L"></div><div style="background:#7FB894" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-accent</div><div class="sw__hex">#2F6B4F · #7FB894</div><div class="sw__use">主按钮底、链接、选中项、进度条</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#245B41" data-lbl="L"></div><div style="background:#9CCBAB" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-accent-strong</div><div class="sw__hex">#245B41 · #9CCBAB</div><div class="sw__use">按钮悬停、代码中的变量名</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#E3E9DE" data-lbl="L"></div><div style="background:#26332A" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-accent-soft</div><div class="sw__hex">#E3E9DE · #26332A</div><div class="sw__use">选中行底、焦点环外圈、内联高亮</div></div></div>
+    <div class="sw"><div class="sw__pair"><div style="background:#B89968" data-lbl="L"></div><div style="background:#C8A876" data-lbl="D"></div></div>
+      <div class="sw__meta"><div class="sw__name">--mr-bronze</div><div class="sw__hex">#B89968 · #C8A876</div><div class="sw__use">文件夹图标、警告类点缀（唯一第二色）</div></div></div>
+  </div>
+
+  <h3 id="c-palette">1.4 主题族（3 色调 × 浅深 = 6 套）</h3>
+  <p>上面三节列的是默认的<strong>暖纸 / 暖墨</strong>。另有两族同构的色调，靠 <code>data-palette</code> 切换。<strong>浅深与色调正交</strong>：<code>data-theme</code> 只管明暗，<code>data-palette</code> 只管色相，六个组合都能选。</p>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:180px">色调</th><th style="width:130px">data-palette</th><th>窗口底</th><th>画布</th><th>强调</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>暖纸 / 暖墨</b><div class="sw__use">默认这族，不写属性</div></td>
+        <td><code>paper</code></td>
+        <td><span class="pv"><i style="background:#F4F0E8"></i><i style="background:#141413"></i></span><div class="sw__hex">#F4F0E8 / #141413</div></td>
+        <td><span class="pv"><i style="background:#FBFAF7"></i><i style="background:#1C1B19"></i></span><div class="sw__hex">#FBFAF7 / #1C1B19</div></td>
+        <td><span class="pv"><i style="background:#2F6B4F"></i><i style="background:#7FB894"></i></span><div class="sw__hex">#2F6B4F / #7FB894</div></td>
+      </tr>
+      <tr>
+        <td><b>竹青 / 墨绿</b><div class="sw__use">宣纸偏青，强调仍是松墨绿</div></td>
+        <td><code>moss</code></td>
+        <td><span class="pv"><i style="background:#EDF2E8"></i><i style="background:#0E1310"></i></span><div class="sw__hex">#EDF2E8 / #0E1310</div></td>
+        <td><span class="pv"><i style="background:#F7FAF3"></i><i style="background:#141A15"></i></span><div class="sw__hex">#F7FAF3 / #141A15</div></td>
+        <td><span class="pv"><i style="background:#2F6B4F"></i><i style="background:#7FB894"></i></span><div class="sw__hex">#2F6B4F / #7FB894</div></td>
+      </tr>
+      <tr>
+        <td><b>天青 / 深蓝</b><div class="sw__use">雨后青白，强调改靛蓝</div></td>
+        <td><code>blue</code></td>
+        <td><span class="pv"><i style="background:#ECF1F7"></i><i style="background:#0D1218"></i></span><div class="sw__hex">#ECF1F7 / #0D1218</div></td>
+        <td><span class="pv"><i style="background:#F7FAFD"></i><i style="background:#121821"></i></span><div class="sw__hex">#F7FAFD / #121821</div></td>
+        <td><span class="pv"><i style="background:#2F6796"></i><i style="background:#7FB3E0"></i></span><div class="sw__hex">#2F6796 / #7FB3E0</div></td>
+      </tr>
+    </tbody>
+  </table></div>
+  <p><strong>只有"变"的东西进覆盖块</strong>：表面 / 描边 / 文字 / 强调软色；字体、字号、圆角、间距、阴影一律不动。每加一族要写两个块（浅 + 深）—— 漏了深色块会出现"深色模式下还是浅色纸底"这种最刺眼的 bug。深色块用 <code>[data-palette="x"][data-theme="dark"]</code>，两个属性选择器稳压基础深色块，所以不必把深色值再抄一遍。</p>
+  <p>外观面板里的色卡不是画出来的色块，而是给元素挂上 <code>data-palette</code> / <code>data-theme</code> 让令牌自己算 —— 因此永远不会有"色卡过期"的问题。</p>
+
+  <hr class="hr">
+
+  <!-- ============ 2 字体 ============ -->
+  <h2 id="t"><span class="num">2</span>字体</h2>
+
+  <h3 id="t-family">2.1 字体族</h3>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:210px">令牌</th><th style="width:250px">字体</th><th>职责</th></tr></thead>
+    <tbody>
+      <tr><td><code>--mr-font-sans</code></td><td style="font-size:15px">Noto Sans SC</td><td>正文与全部 UI。选它是因为中文全字重可用、小字号下笔画不糊，且拉丁字母与原生的 Inter 同源</td></tr>
+      <tr><td><code>--mr-font-serif</code></td><td style="font-family:var(--mr-font-serif);font-size:16px">Source Han Serif CN</td><td>文档标题、引用块、产品字标。给阅读器一点「书」的质感，也是它区别于代码编辑器的关键</td></tr>
+      <tr><td><code>--mr-font-mono</code></td><td style="font-family:var(--mr-font-mono);font-size:14px">JetBrains Mono</td><td>代码块、行内码、路径、数值。字符宽高比规整，中文回退也不跳行</td></tr>
+      <tr><td><code>--mr-font-latin</code></td><td style="font-family:var(--mr-font-latin);font-size:15px">Inter</td><td>纯拉丁元信息与数字，配合 <code>font-variant-numeric: tabular-nums</code> 对齐时间戳与计数</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="t-scale">2.2 字号阶梯</h3>
+  <p>共 14 级，全部以「用途」命名而非以「大小」命名——写代码时想的是「这是正文」而不是「这是 15px」。</p>
+  <div class="scale">
+    <div class="scale__row"><div class="scale__spec"><b>display</b>38 / 46 · 700 serif</div><div style="font:700 30px/1.15 var(--mr-font-serif);color:var(--mr-text-1)">快速上手</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>h1</b>30 / 38 · 700 serif</div><div style="font:700 25px/1.2 var(--mr-font-serif);color:var(--mr-text-1)">MoRead</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>h2</b>23 / 30 · 600 serif</div><div style="font:600 20px/1.3 var(--mr-font-serif);color:var(--mr-text-1)">1 · 安装</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>h3</b>18 / 26 · 500 sans</div><div style="font:500 16px/1.4 var(--mr-font-sans);color:var(--mr-text-1)">命令行安装</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>section</b>15 / 22 · 500 sans</div><div style="font:500 15px var(--mr-font-sans);color:var(--mr-text-1)">外观</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>lead</b>15.5 / 27 · 400 serif</div><div style="font:400 15.5px/1.7 var(--mr-font-serif);color:var(--mr-text-2)">正文字号 15px、行高 1.73、宽度 680px</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>body</b>15 / 26 · 400 sans</div><div style="font:400 15px/1.73 var(--mr-font-sans);color:var(--mr-text-2)">阅读器的主力字号，中文行高比英文放宽 0.1</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>body-sm</b>13.5 / 24 · 400 sans</div><div style="font:400 13.5px/1.75 var(--mr-font-sans);color:var(--mr-text-2)">说明性段落，用于空态与引导页</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>ui</b>13 / 20 · 500 sans</div><div style="font:500 13px var(--mr-font-sans);color:var(--mr-text-1)">设置项标签、按钮文案</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>ui-sm</b>12.5 / 18 · 500 sans</div><div style="font:500 12.5px var(--mr-font-sans);color:var(--mr-text-1)">标签页标题、文件树项</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>meta</b>12 / 18 · 400 sans</div><div style="font:400 12px var(--mr-font-sans);color:var(--mr-text-5)">提示语、按钮内的次级说明</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>meta-sm</b>11.5 / 17 · 400 sans</div><div style="font:400 11.5px var(--mr-font-sans);color:var(--mr-text-5)">字段描述、搜索命中片段</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>meta-xs</b>11 / 16 · 400 sans</div><div style="font:400 11px var(--mr-font-sans);color:var(--mr-text-5)">命中计数、语言标签</div></div>
+    <div class="scale__row"><div class="scale__spec"><b>code</b>12.5 / 20 · 400 mono</div><div style="font:400 12.5px var(--mr-font-mono);color:var(--mr-text-1)">winget install MoRead.MoRead</div></div>
+  </div>
+
+  <h4>排版铁律</h4>
+  <div class="tbl"><table>
+    <tbody>
+      <tr><td style="width:170px;font-weight:500;color:var(--mr-text-1)">阅读列宽 ≤ 680px</td><td>超过 680px 眼睛要来回扫行。窗口再宽，正文列宽也不放宽——默认 680，用户可在 600–1400 间调</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">中文行高 ≥ 1.7</td><td>汉字是方块字，1.5 行高会挤。正文用 26px/15px ≈ 1.73</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">标题 serif，正文 sans</td><td>文档级标题一律 Source Han Serif；UI 与正文一律 Noto Sans SC。不混用</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">正文左对齐</td><td>除空态与引导页的居中说明外，正文永不居中、永不两端对齐</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="t-scalable">2.4 正文字号可调（12–22 px）</h3>
+  <p>只有<b>一个</b>旋钮：正文字号，默认 15px。其余 13 级不单独调，按同一倍率联动。</p>
+
+  <div class="tbl"><table>
+    <tbody>
+      <tr><td style="width:170px;font-weight:500;color:var(--mr-text-1)">范围 / 步进</td><td>12–22px，1px 一档；默认 15。再小读不动，再大会把 680px 版心压成窄条</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">载体</td><td><code>--mr-read-scale</code>（1 = 15px）写在 <code>&lt;html&gt;</code> 上</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">生效范围</td><td>仅 <code>.mr-article</code> 子树——它在自己身上重算 11 组字号 / 行高令牌</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">界面</td><td>读 <code>:root</code> 原值，<b>任何档位都不跟着放大</b>：标签页、侧栏、面板像素级不变</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">版心</td><td><code>--mr-reading-w</code> 固定不缩放——放大的是字，不是纸</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">入口</td><td>外观面板 <code>− 15px +</code>、<code>Ctrl+滚轮</code>、<code>Ctrl+=</code> / <code>Ctrl+-</code> / <code>Ctrl+0</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>两个理由：</b>① 铁律 2 在任意档位都成立——行高与字号同倍率，比值恒为 1.73。② 不做整页 <code>zoom</code>：那会连工具栏一起放大，读起来像浏览器按错了键。阅读器要调的是「字」，不是「界面」。</div>
+
+  <hr class="hr">
+
+  <!-- ============ 3 间距 / 圆角 / 阴影 ============ -->
+  <h2 id="sp"><span class="num">3</span>间距 / 圆角 / 阴影</h2>
+
+  <h3>3.1 间距阶梯（4px 基准）</h3>
+  <div class="sp-list">
+    <div class="sp"><span class="sp__v">--mr-sp-1</span><span class="sp__v">4px</span><span class="sp__bar" style="width:4px"></span><span class="sp__u">图标与文字、紧凑间隙</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-2</span><span class="sp__v">8px</span><span class="sp__bar" style="width:20px"></span><span class="sp__u">代码块行距、按钮图标间距</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-3</span><span class="sp__v">12px</span><span class="sp__bar" style="width:36px"></span><span class="sp__u">列表行内边距、卡片内间距</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-4</span><span class="sp__v">16px</span><span class="sp__bar" style="width:52px"></span><span class="sp__u">段落间距、面板内边距</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-5</span><span class="sp__v">20px</span><span class="sp__bar" style="width:68px"></span><span class="sp__u">设置行内边距、按钮内边距</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-6</span><span class="sp__v">24px</span><span class="sp__bar" style="width:84px"></span><span class="sp__u">区块间距</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-8</span><span class="sp__v">32px</span><span class="sp__bar" style="width:112px"></span><span class="sp__u">阅读区上下留白</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-10</span><span class="sp__v">40px</span><span class="sp__bar" style="width:140px"></span><span class="sp__u">大区块分隔</span></div>
+    <div class="sp"><span class="sp__v">--mr-sp-16</span><span class="sp__v">64px</span><span class="sp__bar" style="width:220px"></span><span class="sp__u">空态页顶部留白</span></div>
+  </div>
+  <div class="note"><b>注意：</b>原型稿里出现过 3 / 5 / 7 / 9 / 11 这类奇数间距，那是绘制时的临时值，<strong>不要照抄进代码</strong>。落地时一律吸附到上面这 9 档。</div>
+
+  <h3>3.2 圆角</h3>
+  <div class="tiles">
+    <div class="tile" style="border-radius:3px">3 · 进度条</div>
+    <div class="tile" style="border-radius:4px">4 · 树项 / 表格</div>
+    <div class="tile" style="border-radius:6px">6 · 按钮 / 代码块</div>
+    <div class="tile" style="border-radius:8px">8 · 卡片 / 面板</div>
+    <div class="tile" style="border-radius:11px;height:44px">11 · 开关</div>
+  </div>
+  <p>最大只到 8px。编辑型阅读界面的圆角一旦超过 12px，就会从「工具」滑向「消费级 App」，那是另一套语言。</p>
+
+  <h3>3.3 阴影</h3>
+  <p><strong>全站只有一处阴影</strong>：<code>--mr-shadow-popover</code>，仅用于浮层（下拉、气泡、右键菜单）。其余所有层级关系一律用 1px 细线承担。</p>
+
+  <hr class="hr">
+
+  <!-- ============ 4 布局常量 ============ -->
+  <h2 id="layout"><span class="num">4</span>布局常量</h2>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:230px">令牌</th><th style="width:140px">值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>--mr-titlebar-h</code></td><td>40px</td><td>标题栏与标签栏合并成一行，省一行高度给正文</td></tr>
+      <tr><td><code>--mr-tab-h</code></td><td>30px</td><td>单个标签高度（激活态才加底与圆角）</td></tr>
+      <tr><td><code>--mr-sidebar-w</code></td><td>240px</td><td>可拖拽 200 – 480px，状态持久化</td></tr>
+      <tr><td><code>--mr-row-h</code></td><td>28px</td><td>文件树行高</td></tr>
+      <tr><td><code>--mr-listrow-h</code></td><td>56px</td><td>最近打开列表行（两行文本）</td></tr>
+      <tr><td><code>--mr-btn-h</code></td><td>38px</td><td>主次按钮统一高度</td></tr>
+      <tr><td><code>--mr-ctrl-h</code></td><td>30px</td><td>分段控件、步进器</td></tr>
+      <tr><td><code>--mr-input-h</code></td><td>32px</td><td>搜索框</td></tr>
+      <tr><td><code>--mr-reading-w</code></td><td>680px</td><td>可调 600 – 1400px</td></tr>
+      <tr><td><code>--mr-settings-w</code></td><td>820px</td><td>设置面板宽度</td></tr>
+      <tr><td><code>--mr-empty-panel-w</code></td><td>560px</td><td>空态最近列表宽度</td></tr>
+    </tbody>
+  </table></div>
+
+  <hr class="hr">
+
+  <!-- ============ 5 组件规范 ============ -->
+  <h2 id="comp"><span class="num">5</span>组件规范</h2>
+
+  <h3>5.1 按钮</h3>
+  <div class="demo">
+    <div class="demo__cap">原始态</div>
+    <button class="btn btn--primary"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>打开文件</button>
+    <button class="btn btn--secondary"><svg viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>打开文件夹</button>
+    <button class="btn btn--text">清除记录</button>
+    <button class="btn btn--disabled">下载并安装</button>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:130px">变体</th><th style="width:230px">样式</th><th>使用场合</th></tr></thead>
+    <tbody>
+      <tr><td>Primary</td><td>底 <code>--mr-accent</code>，文字 #FFF，高 38，圆角 6，内边距 0 18</td><td>一个界面只能有一个</td></tr>
+      <tr><td>Secondary</td><td>无底，1px <code>--mr-border-strong</code>，文字 <code>--mr-text-2</code></td><td>次要动作，与 Primary 并排</td></tr>
+      <tr><td>Text</td><td>无底无框，文字 <code>--mr-accent</code>，内边距 0 4</td><td>低权重动作，如「清除记录」</td></tr>
+      <tr><td>Disabled</td><td>Primary 加 <code>opacity: .4</code>，<code>cursor: not-allowed</code></td><td>不可用但仍需可见，让人知道功能存在</td></tr>
+    </tbody>
+  </table></div>
+  <p>悬停：Primary → <code>--mr-accent-strong</code>；Secondary → 底 <code>--mr-surface-track</code>。过渡 120ms。</p>
+
+  <h3>5.2 窗口标签</h3>
+  <div class="demo">
+    <div class="tabstrip">
+      <span class="wtab wtab--active"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>guide.md<svg viewBox="0 0 24 24" fill="none" style="width:11px;height:11px;opacity:.6"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+      <span class="wtab"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>api.md</span>
+      <span class="wtab" style="padding:0 8px"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px"><path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    </div>
+  </div>
+  <p>激活标签才有白底与 6px 圆角；未激活无底、文字降为 <code>--mr-text-4</code>。中键点击关闭，溢出时横向滚动而非压缩宽度。</p>
+
+  <h3>5.3 侧栏分段 Tab 与文件树</h3>
+  <div class="demo">
+    <div class="sbtabs"><span class="sbtab sbtab--active">文件</span><span class="sbtab">大纲</span><span class="sbtab">搜索</span></div>
+    <div class="tree">
+      <div class="trow"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>docs</div>
+      <div class="trow trow--sel"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>guide.md</div>
+      <div class="trow trow--hover"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>api.md</div>
+      <div class="trow trow--gone"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>deleted.md</div>
+    </div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:150px">状态</th><th>样式</th></tr></thead>
+    <tbody>
+      <tr><td>默认</td><td>文字 <code>--mr-text-2</code>，14 级左内边距，子级 14 + 7</td></tr>
+      <tr><td>悬停</td><td>底 <code>--mr-surface-track</code>，圆角 4</td></tr>
+      <tr><td>选中</td><td>底 <code>--mr-accent-soft</code>，文字与图标转 <code>--mr-accent</code>，字重 500</td></tr>
+      <tr><td>失效</td><td>文字 <code>--mr-text-6</code> 加删除线（文件被移走时）</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>5.4 表单控件</h3>
+  <div class="demo">
+    <div class="demo__cap">开关 · 分段 · 步进器 · 输入框</div>
+    <span class="toggle"></span>
+    <span class="toggle toggle--off"></span>
+    <span class="toggle toggle--disabled"></span>
+    <div class="seg" style="height:30px"><button aria-pressed="true">浅色</button><button>深色</button><button>跟随系统</button></div>
+    <span class="stepper"><span>−</span><b>15 px</b><span>+</span></span>
+    <span class="input input--focus"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>报表</span>
+  </div>
+  <div class="note"><b>交互约定：</b>设置项<strong>一律即时生效 + 自动保存</strong>，没有「确定 / 取消」按钮。阅读器的设置全是可逆的视觉参数，加确认只是给用户添麻烦。</div>
+
+  <h3>5.5 搜索命中行</h3>
+  <div class="demo demo--col" style="width:100%;max-width:420px">
+    <div class="hit hit--sel">
+      <div class="hit__h"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="#2F6B4F" stroke-width="2" stroke-linejoin="round"/></svg><span class="hit__n">复卷报表字段说明.md</span></div>
+      <div class="hit__s">…按产品代码 + 规格型号汇总未预留吨数，为 0 则不赋给生产计划…</div>
+    </div>
+    <div class="hit">
+      <div class="hit__h"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h7.5L18 7.5V21H6z" stroke="#A39D8F" stroke-width="2" stroke-linejoin="round"/></svg><span class="hit__n">月度报表模板.md</span></div>
+      <div class="hit__s">…月度报表模板与复卷报表口径保持一致…</div>
+    </div>
+  </div>
+  <p>结果行必须同时给出<strong>文件名 + 匹配片段</strong>——只给文件名等于让用户再点进去找一次。</p>
+
+  <h3 id="comp-md">5.6 Markdown 渲染件</h3>
+  <div class="demo demo--col">
+    <div class="md">
+      <h1>快速上手</h1>
+      <h2>1 · 安装</h2>
+      <p>在 Windows 上安装 MoRead 只需要一步：下载安装包后双击运行。首次启动会自动检测 <code>WebView2</code> 运行环境。</p>
+      <div class="codeblock">
+        <div class="codeblock__head"><span>powershell</span><svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px"><rect x="8" y="8" width="11.5" height="11.5" rx="2.5" stroke="currentColor" stroke-width="1.9"/><path d="M5.5 15.5V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+        <div class="codeblock__body">winget install MoRead.MoRead
+<span class="c"># 或从官网下载安装包后双击运行</span>
+moread.exe <span class="v">D:/notes/guide.md</span></div>
+      </div>
+      <div class="mtable"><table>
+        <thead><tr><th>设置项</th><th>默认值</th></tr></thead>
+        <tbody><tr><td>正文字号</td><td style="font-family:var(--mr-font-mono);font-size:12px">15 px</td></tr>
+        <tr><td>内容宽度上限</td><td style="font-family:var(--mr-font-mono);font-size:12px">680 px</td></tr></tbody>
+      </table></div>
+      <div class="mquote">正文字号 15px、行高 1.73、阅读宽度上限 680px —— 这是长时间阅读最舒服的一组默认值。</div>
+      <ul class="tasks">
+        <li><span class="box box--done"></span>支持 GFM 表格与任务列表</li>
+        <li><span class="box"></span>Mermaid 图表（懒加载）</li>
+      </ul>
+      <p>外链一律调起系统浏览器；<a href="#">目录内链接</a>在应用内开新标签。</p>
+    </div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:150px">元素</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td>h1 / h2</td><td>Source Han Serif，700 / 600，颜色 <code>--mr-text-1</code></td></tr>
+      <tr><td>h3</td><td>切换为 Noto Sans SC 500。三级标题开始用无衬线，避免整页都是宋体显得发闷</td></tr>
+      <tr><td>代码块</td><td>底 <code>--mr-surface-code</code> + 1px 边框 + 6px 圆角；头部独立一行放语言名与复制按钮</td></tr>
+      <tr><td>表格</td><td>表头底 <code>--mr-surface-tint</code>，行间 1px <code>--mr-border-soft</code>，无竖线</td></tr>
+      <tr><td>引用块</td><td>底 <code>--mr-surface-tint</code>，边框 <code>--mr-accent-armor</code>（带绿调），字体切 serif 并加大行高</td></tr>
+      <tr><td>图片</td><td>最大宽度 100%，圆角 6，缺失时显示占位框 + 原始路径</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="comp-state">5.7 三态规范</h3>
+  <div class="states">
+    <div class="state"><div class="state__t">加载中</div><div class="skel" style="width:80%"></div><div class="skel" style="width:100%"></div><div class="skel" style="width:60%"></div><div class="state__d" style="margin-top:9px">骨架屏用 <code>--mr-surface-track</code>，不用转圈</div></div>
+    <div class="state"><div class="state__t" style="margin-bottom:12px">空</div><div class="state__d">说清「为什么空」并给一个动作。<br>例：还没有打开过文件 → 给「打开文件」按钮</div></div>
+    <div class="state"><div class="state__t" style="margin-bottom:12px">错误</div><div class="state__d">写清发生了什么 + 下一步怎么办。<br>文件缺失 → 显示原路径 + 「移除标签」</div></div>
+  </div>
+  <div class="note"><b>硬要求：</b>任何数据面都必须实现这四态——加载 / 空 / 错误 / 成功。禁止静默失败，禁止留白让人猜。</div>
+
+  <hr class="hr">
+
+  <!-- ============ 6 无障碍 ============ -->
+  <h2 id="a11y"><span class="num">6</span>无障碍</h2>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:220px">项</th><th>要求</th></tr></thead>
+    <tbody>
+      <tr><td>正文对比度</td><td>≥ 4.5:1。六级灰阶中 1–3 级达标（最低 6.6:1），<strong>4–6 级禁止用于正文</strong></td></tr>
+      <tr><td>焦点环</td><td>2px <code>--mr-accent</code> + 2px 偏移。<strong>任何情况下不得移除 outline</strong></td></tr>
+      <tr><td>全键盘</td><td>每个功能都要有快捷键，且不得占用系统级组合键</td></tr>
+      <tr><td>缩放</td><td><code>Ctrl+=</code> / <code>Ctrl+-</code> / <code>Ctrl+0</code>，80% – 200%，缩放后布局不得错位</td></tr>
+      <tr><td>动效</td><td>尊重 <code>prefers-reduced-motion</code>，命中时全部过渡置 0</td></tr>
+      <tr><td>触控目标</td><td>可点击区域最小 28×28，窗口控件 44×39</td></tr>
+    </tbody>
+  </table></div>
+
+  <hr class="hr">
+
+  <!-- ============ 7 禁止项 ============ -->
+  <h2 id="dont"><span class="num">7</span>禁止项</h2>
+  <p>下面这些不是"建议"，是写进 code review checklist 的硬性禁止项。</p>
+  <div class="dont">
+    <div class="dont__i"><div class="dont__t">✕ 大面积阴影与渐变</div><div class="dont__d">层级一律用 1px 细线。浮层除外（唯一允许 <code>--mr-shadow-popover</code>）</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 圆角 &gt; 8px</div><div class="dont__d">超过就从「工具」滑向「消费级 App」，破坏编辑型阅读的克制感</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 饱和度 &gt; 40% 的色</div><div class="dont__d">强调色 6.1:1 已达标，再加饱和只会抢正文的注意力</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 第二个强调色</div><div class="dont__d">每屏只允许一个 <code>--mr-accent</code>。青铜色只用于文件夹图标与警告点缀</div></div>
+    <div class="dont__i"><div class="dont__t">✕ emoji 当图标</div><div class="dont__d">一律用 SVG 描边图标。emoji 在不同系统字体下渲染不一致，且基调不对</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 正文列宽 &gt; 680px</div><div class="dont__d">窗口再宽也不放宽正文，多出的空间留给留白</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 正文居中 / 两端对齐</div><div class="dont__d">只有空态与引导页的说明文字可以居中</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 主题切换加过渡</div><div class="dont__d">会闪白。<code>--mr-dur-theme: 0ms</code>，硬切</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 设置项加「确定」按钮</div><div class="dont__d">全部即时生效 + 自动保存。可逆的视觉参数不需要确认</div></div>
+    <div class="dont__i"><div class="dont__t">✕ 装饰性分隔线</div><div class="dont__d">线必须有功能含义（分组 / 边界），不能只是为了好看</div></div>
+  </div>
+
+  <footer>MoRead 设计规范 v1.2 · 2026-10-18 · 配套文件：tokens.css · tokens.ts · 原型 6 屏</footer>
+</main>
+</div>
+
+<script>
+(function () {
+  var btns = document.querySelectorAll('[data-theme-btn]');
+  function apply(mode) {
+    document.documentElement.dataset.theme = mode;
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeBtn === mode)); });
+  }
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { apply(b.dataset.themeBtn); });
+  });
+  var forced = new URLSearchParams(location.search).get('theme');
+  if (forced === 'dark' || forced === 'light') { apply(forced); return; }
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) apply('dark');
+})();
+</script>
+</body>
+</html>

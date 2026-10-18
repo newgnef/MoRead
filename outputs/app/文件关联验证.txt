@@ -1,0 +1,43 @@
+MoRead · 文件关联（M7）验证记录
+生成时间：2026-10-18 01:10
+
+一、配置
+  tauri.conf.json → bundle.fileAssociations
+    ext: ["md", "markdown"]
+    name/description: "Markdown 文档"
+    role: Viewer        （只读，不是 Editor）
+    mimeType: text/markdown
+
+二、Rust 侧日志（%LOCALAPPDATA%\com.moread.reader\logs\MoRead.log）
+  [2026-10-17][16:56:43][moread_lib][INFO] 启动参数里发现 1 个待打开文档：["C:\\Users\\LS\\AppData\\Local\\Temp\\moread-assoc\\关联测试A.md"]
+  [2026-10-17][16:56:49][moread_lib][INFO] 第二实例请求打开 1 个文档：["C:\\Users\\LS\\AppData\\Local\\Temp\\moread-assoc\\子目录\\B.markdown"]
+
+  说明：第一条是冷启动（进程带参数），第二条是程序已在运行时的转交。
+        两条路径都走到了 md_args() → 入队 → emit。
+
+三、端到端证据（窗口标题跟随当前文档）
+  ① 冷启动（debug 版）      关联测试A.md — MoRead
+  ② 第二实例转交（debug 版） B.markdown — MoRead     第二实例自身已退出，进程数仍为 1
+  ③ 冷启动（release 版）    关联测试A.md — MoRead
+  ④ 停掉 dev server 后        B.markdown — MoRead     证明内嵌前端自包含
+
+  标题由前端 setWindowTitle() 写入。它能变成文档名，说明前端
+  确实调通了 take_pending_open → readDoc → addTab 这条链，
+  而不是只收到事件却没渲染。
+
+四、安装包内的关联注册（target\release\nsis\x64\installer.nsi）
+  !include "FileAssociation.nsh"
+  !insertmacro APP_ASSOCIATE "md" "Markdown 文档" ... "$INSTDIR\moread.exe $\"%1$\""
+  !insertmacro APP_ASSOCIATE "markdown" "Markdown 文档" ...
+  卸载段：
+  !insertmacro APP_UNASSOCIATE "md" "Markdown 文档"
+  !insertmacro APP_UNASSOCIATE "markdown" "Markdown 文档"
+
+  FileAssociation.nsh 的卸载实现：先把 .md 的默认值恢复成安装前的备份
+  （.md\<ProgID>_backup），再删掉自己的 ProgID 键。所以卸载不会留下
+  一个指向已删除 ProgID 的死关联。
+
+五、未验证项（需人工）
+  · 实际执行安装包 → 双击 .md 由资源管理器转交（会改 HKCU 注册表，未擅自执行）
+  · 免安装版不写注册表，因此双击 .md 仍走系统原有默认程序；要关联必须装安装包
+  · 安装会接管 .md / .markdown 的默认打开方式（卸载时恢复原值）

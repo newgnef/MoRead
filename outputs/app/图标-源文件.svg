@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    MoRead 图标 · 一本翻开的书
+
+    形状的每一处都是 16px 实测逼出来的：
+      · 书页外角必须向上外翘。外角一放平，16px 就退化成一个白方块 ——
+        「张开」这个信息只存在于上缘那两个尖上。
+      · 外角再用 Q 收圆。直角尖在 16px 会磨出半透明白毛刺。
+      · 书脊是一条透出底色的墨缝，宽 3.6、长 14.4。缝短而粗会像一根黑棒，
+        书上的凹槽本来就该是细长的；窄过 3.2 则在 16px 下消失。
+      · 两页在书脊底部相连，外轮廓是一个 U 而不是两条独立白条 ——
+        后者会被读成暂停键。
+      · 书脊两侧的淡墨影 + 书页轮廓的暖灰细边是纸的质感，
+        16px 时只让边缘略柔，不会变脏。
+
+    配色即「墨与纸」：松墨绿底（与 App 强调色同源）+ 暖纸白书页。
+    底色不能再深 —— 接近 #202020 时，图标贴在深色任务栏上会整块隐形。
+  -->
+  <defs>
+    <linearGradient id="mrIconBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+    <linearGradient id="mrIconPage" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#FDFAF3"/>
+      <stop offset="1" stop-color="#EBE3D1"/>
+    </linearGradient>
+    <linearGradient id="mrIconShadeL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFDF7" stop-opacity="0"/>
+      <stop offset="1" stop-color="#6B5C3E" stop-opacity="0.24"/>
+    </linearGradient>
+    <linearGradient id="mrIconShadeR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6B5C3E" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#FFFDF7" stop-opacity="0"/>
+    </linearGradient>
+
+    <path id="mrBook" d="M32 27.4
+           C27.6 22.8 20.2 17.2 14.9 16.2
+           Q 10.9 15.4 10.9 18.8
+           L11.8 37.6
+           C12.1 40.5 13.8 41.8 16.5 42.3
+           C22.2 43.2 28.5 44.2 32 46.0
+           C35.5 44.2 41.8 43.2 47.5 42.3
+           C50.2 41.8 51.9 40.5 52.2 37.6
+           L53.1 18.8
+           Q 53.1 15.4 49.1 16.2
+           C43.8 17.2 36.4 22.8 32 27.4
+           Z"/>
+    <clipPath id="mrBookClip"><use href="#mrBook"/></clipPath>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#mrIconBg)"/>
+
+  <use href="#mrBook" fill="url(#mrIconPage)"/>
+
+  <g clip-path="url(#mrBookClip)">
+    <rect x="26.0" y="13" width="6.0" height="35" fill="url(#mrIconShadeL)"/>
+    <rect x="38.0" y="13" width="6.0" height="35" fill="url(#mrIconShadeR)"/>
+  </g>
+
+  <use href="#mrBook" fill="none" stroke="#DCD1B9" stroke-width="0.9" stroke-opacity="0.85"/>
+
+  <path d="M32 27.8 V 42.2"
+        stroke="#1B3A2C" stroke-width="3.6" stroke-linecap="round"/>
+</svg>

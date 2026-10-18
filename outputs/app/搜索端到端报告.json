@@ -1,0 +1,167 @@
+{
+  "url": "http://127.0.0.1:1420/?theme=light&ws=C:/Users/LS/AppData/Local/Temp/moread-search-test",
+  "keyword": "报表",
+  "groups": [
+    {
+      "name": "api.md",
+      "count": 1,
+      "current": true,
+      "hits": [
+        {
+          "line": "3",
+          "text": "报表接口已废弃，只保留只读查询。"
+        }
+      ]
+    },
+    {
+      "name": "备忘.md",
+      "count": 3,
+      "current": false,
+      "hits": [
+        {
+          "line": "3",
+          "text": "关于报表的三点备注："
+        },
+        {
+          "line": "4",
+          "text": "- 报表字段命名不统一"
+        },
+        {
+          "line": "5",
+          "text": "- 报表取数走存储过程"
+        }
+      ]
+    },
+    {
+      "name": "guide.md",
+      "count": 5,
+      "current": false,
+      "hits": [
+        {
+          "line": "3",
+          "text": "导入报表时，需要先确认报表口径。"
+        },
+        {
+          "line": "3",
+          "text": "导入报表时，需要先确认报表口径。"
+        },
+        {
+          "line": "4",
+          "text": "本工具用于阅读 Markdown，报表导出不在 V1 范围。"
+        },
+        {
+          "line": "6",
+          "text": "## 报表口径"
+        },
+        {
+          "line": "8",
+          "text": "同一份报表在不同科室口径不同，务必核对。"
+        }
+      ]
+    },
+    {
+      "name": "target.md",
+      "count": 7,
+      "current": false,
+      "hits": [
+        {
+          "line": "3",
+          "text": "参考 [报表规范](https://example.com/报表/规范) ——…"
+        },
+        {
+          "line": "3",
+          "text": "…ps://example.com/报表/规范) —— 链接目标里的「报表」不该计入正文匹配。"
+        },
+        {
+          "line": "19",
+          "text": "第 1 处：报表A 出现在这里。"
+        },
+        {
+          "line": "35",
+          "text": "第 2 处：报表B 出现在这里。"
+        },
+        {
+          "line": "51",
+          "text": "第 3 处：报表C 出现在这里。"
+        },
+        {
+          "line": "67",
+          "text": "第 4 处：报表D 出现在这里。"
+        },
+        {
+          "line": "83",
+          "text": "第 5 处：报表E 出现在这里。"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "工作区文件树已加载",
+      "ok": true,
+      "detail": "5 篇文档"
+    },
+    {
+      "name": "切到搜索页签",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "返回了跨文件的分组结果",
+      "ok": true,
+      "detail": "4 个文件 · 16 条命中"
+    },
+    {
+      "name": "当前打开的文档被排到最前并标记",
+      "ok": true,
+      "detail": "api.md（当前）"
+    },
+    {
+      "name": "结果里含 target.md",
+      "ok": true,
+      "detail": "7 条展示 / 共 7 处"
+    },
+    {
+      "name": "target.md 点击前尚未打开",
+      "ok": true,
+      "detail": "已打开：api.md"
+    },
+    {
+      "name": "点击「报表D」所在的那条命中",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "未打开的文件被自动打开",
+      "ok": true,
+      "detail": "已打开：api.md / target.md"
+    },
+    {
+      "name": "且成为当前标签",
+      "ok": true,
+      "detail": "当前：target.md"
+    },
+    {
+      "name": "正文换成了目标文档",
+      "ok": true,
+      "detail": "h1 = 定位验证"
+    },
+    {
+      "name": "定位用的是点击那一条的序号",
+      "ok": true,
+      "detail": "needle=报表 ordinal=5 block=-1"
+    },
+    {
+      "name": "视口内出现「报表D」",
+      "ok": true,
+      "detail": "视口内命中：第4处：报表D | 第5处：报表E"
+    },
+    {
+      "name": "视口内没有「报表A」—— 确认不是跳到了第一处",
+      "ok": true,
+      "detail": "视口高度 721px"
+    }
+  ],
+  "passed": 13,
+  "total": 13
+}

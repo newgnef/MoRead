@@ -1,0 +1,175 @@
+{
+  "checks": [
+    {
+      "name": "默认宽度 240px",
+      "ok": true,
+      "detail": "240px"
+    },
+    {
+      "name": "拖拽条骑在侧栏右边线上",
+      "ok": true,
+      "detail": "gutter 中心 240，侧栏右边缘 240"
+    },
+    {
+      "name": "热区比线宽（7px），好点中",
+      "ok": true,
+      "detail": "7px"
+    },
+    {
+      "name": "按下即进入拖动态（全局锁光标）",
+      "ok": true,
+      "detail": "is-resizing=true"
+    },
+    {
+      "name": "拖动中拖拽条高亮",
+      "ok": true,
+      "detail": "gutter s-XsEmFtvddWTw gutter--active"
+    },
+    {
+      "name": "拖到 360px：侧栏跟着变宽",
+      "ok": true,
+      "detail": "360px"
+    },
+    {
+      "name": "正文同步让位（不重叠、不被挤破）",
+      "ok": true,
+      "detail": "正文 760 → 640"
+    },
+    {
+      "name": "松手后退出拖动态",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "宽度写进了 localStorage",
+      "ok": true,
+      "detail": "stored=360"
+    },
+    {
+      "name": "左夹取：拖到 60px 只到 200px",
+      "ok": true,
+      "detail": "200px"
+    },
+    {
+      "name": "右夹取：不越过 480px（480 与\"正文留 420\"取小）",
+      "ok": true,
+      "detail": "480px，窗口 1000px"
+    },
+    {
+      "name": "双击拖拽条复位为 240px",
+      "ok": true,
+      "detail": "240px"
+    },
+    {
+      "name": "拖拽条可聚焦（Tab 能到它）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "→ 键每次 +8px",
+      "ok": true,
+      "detail": "256px"
+    },
+    {
+      "name": "Shift+← 一次 -32px",
+      "ok": true,
+      "detail": "224px"
+    },
+    {
+      "name": "Home 到最窄 200px",
+      "ok": true,
+      "detail": "200px"
+    },
+    {
+      "name": "End 到最宽",
+      "ok": true,
+      "detail": "480px"
+    },
+    {
+      "name": "重开窗口仍记得上次宽度",
+      "ok": true,
+      "detail": "330px"
+    },
+    {
+      "name": "折叠后侧栏消失、拖拽条一起隐藏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "折叠后出现 44px 图标栏（不是彻底消失）",
+      "ok": true,
+      "detail": "rail 44px"
+    },
+    {
+      "name": "图标栏里留着 文件/大纲/搜索 三个入口",
+      "ok": true,
+      "detail": "files / outline / search"
+    },
+    {
+      "name": "图标栏底部有展开按钮",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "折叠释放的宽度全给正文",
+      "ok": true,
+      "detail": "正文 670 → 956（侧栏 330 → 栏 44）"
+    },
+    {
+      "name": "点图标栏的「搜索」→ 展开并切到搜索",
+      "ok": true,
+      "detail": "侧栏 330px，当前 搜索"
+    },
+    {
+      "name": "展开后宽度还是折叠前的（没被重置成 240）",
+      "ok": true,
+      "detail": "330px"
+    },
+    {
+      "name": "展开后拖拽条回来",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "侧栏左上角的收起按钮也能折叠",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "再按一次 Ctrl+B 展开回来",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "拖动后正文仍在，块数不变（虚拟滚动没被搞坏）",
+      "ok": true,
+      "detail": "{\"articlePresent\":true,\"articleW\":680,\"blocks\":2832,\"calibrated\":true}"
+    },
+    {
+      "name": "长文档打开（虚拟滚动生效）",
+      "ok": true,
+      "detail": "ok:2832"
+    },
+    {
+      "name": "改宽度后仍停在同一处（首屏块号漂移 ≤ 3）",
+      "ok": true,
+      "detail": "第 1268 块 → 第 1267 块（共 2832）"
+    },
+    {
+      "name": "没有被弹回开头",
+      "ok": true,
+      "detail": "scrollTop=161433"
+    },
+    {
+      "name": "重算后没有掉进空白（渲染元素数正常）",
+      "ok": true,
+      "detail": "渲染 21 块，总高 346575 → 358999"
+    }
+  ],
+  "doc": {
+    "articlePresent": true,
+    "articleW": 680,
+    "blocks": 2832,
+    "calibrated": true
+  }
+}

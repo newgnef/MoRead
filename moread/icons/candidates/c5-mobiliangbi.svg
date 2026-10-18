@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 C5 · 墨底两笔（纸在墨）
+    底色用松墨绿渐变而不是近黑：`#1F2A24` 贴在深色任务栏的 `#202020` 上会消失，
+    松墨绿在亮底和暗底都立得住。两道笔为暖纸色，与 A3 同构。
+  -->
+  <defs>
+    <linearGradient id="ink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3C7C5C"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#ink)"/>
+
+  <!-- 短笔 -->
+  <path d="M20.5 23.5 Q20.5 20 24 20 Q27.5 20 27.5 23.5 L25.9 37 Q24 40.5 22.1 37 Z" fill="#F8F4EB"/>
+  <!-- 长笔 -->
+  <path d="M35.5 21.5 Q35.5 18 39 18 Q42.5 18 42.5 21.5 L40.9 45 Q39 48.5 37.1 45 Z" fill="#F8F4EB"/>
+</svg>

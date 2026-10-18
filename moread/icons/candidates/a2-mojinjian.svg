@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 A2 · 墨浸简
+    A 的毛病是「墨滴居中 + 两简等长」＝ 一个小人（头 + 腿）。
+    改法：墨不悬空，直接浸在左侧简的顶端；两简不等长、不等高，
+    整体不对称，就不会再被读成人形。
+  -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#F8F4EB"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#1F2A24" stroke-width="2.4"/>
+
+  <!-- 右简：完整 -->
+  <rect x="39" y="26" width="7" height="24" rx="3.5" fill="#1F2A24"/>
+
+  <!-- 左简：顶端被墨浸开，墨头比简宽，边界是圆的 -->
+  <path d="M24.5 20.5c3.4 0 6 2.9 6 6.2v19.8a3.5 3.5 0 0 1-7 0V26.7c0-3.3 1.6-6.2 1-6.2z"
+        fill="#1F2A24"/>
+  <circle cx="25" cy="21.5" r="6.4" fill="#1F2A24"/>
+</svg>

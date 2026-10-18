@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 C4 · 满版墨简
+    C 的问题是「大框套小框」：纸边 + 墨印 + 反白简条，三层嵌套，
+    16px 下像插座。改成整枚图标就是一块墨，只留反白简条。
+  -->
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="#1F2A24"/>
+
+  <!-- 反白竹简：长短不一，位置不对称 -->
+  <rect x="20.5" y="24" width="6.4" height="16" rx="3.2" fill="#F8F4EB"/>
+  <rect x="34" y="16" width="6.4" height="32" rx="3.2" fill="#F8F4EB"/>
+
+  <!-- 飞白：墨块右上被干笔扫过的两道细痕（放大时才看得见） -->
+  <path d="M43.5 12.5l3.6-1.2M44 16.6l3.4-1.1" stroke="#F8F4EB" stroke-width="1"
+        stroke-linecap="round" opacity="0.3"/>
+</svg>

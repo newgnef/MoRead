@@ -1,0 +1,73 @@
+{
+  "doc": "C:/Users/LS/AppData/Local/Temp/moread-watch-test/index.md",
+  "startedAt": "2026-10-16T12:16:33.922Z",
+  "state": {
+    "tabs": [
+      "index.md"
+    ],
+    "rows": 3,
+    "files": 2,
+    "meta": "1 个目录 · 2 篇文档",
+    "ws": "moread-watch-test",
+    "h1": "监听测试",
+    "text": "监听测试\n这个文件用于验证「外部修改自动重载」。\n第一节\n当前内容为第一版。\n第二节\n\n一行\n两行\n\n第三节\n占位段落，用来制造可滚动的正文长度。\njava复制public class Demo {\n    public static void main(String[] a) {}\n}\n",
+    "backend": "",
+    "scrollTop": 0
+  },
+  "before": {
+    "scrollTop": 0,
+    "anchor": "监听测试"
+  },
+  "after": {
+    "scrollTop": 0,
+    "anchor": "监听测试",
+    "toast": [
+      "index.md 已在磁盘上更新，已重新载入"
+    ],
+    "hasNew": true
+  },
+  "checks": [
+    {
+      "name": "文件树从真实工作区读取",
+      "ok": true,
+      "detail": "2 篇文档 / 3 行"
+    },
+    {
+      "name": "工作区名来自磁盘路径",
+      "ok": true,
+      "detail": "moread-watch-test"
+    },
+    {
+      "name": "正文渲染了磁盘上的文档",
+      "ok": true,
+      "detail": "h1 = 监听测试"
+    },
+    {
+      "name": "外部改写后自动重载",
+      "ok": true,
+      "detail": "内容已更新"
+    },
+    {
+      "name": "重载后仍在同一段文字上",
+      "ok": true,
+      "detail": "前「监听测试」→ 后「监听测试」"
+    },
+    {
+      "name": "滚动量没有大幅跳动",
+      "ok": true,
+      "detail": "Δ = 0px"
+    },
+    {
+      "name": "给出了重载提示",
+      "ok": true,
+      "detail": "index.md 已在磁盘上更新，已重新载入"
+    },
+    {
+      "name": "新增内容已渲染",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "passed": 8,
+  "total": 8
+}

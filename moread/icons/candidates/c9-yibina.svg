@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 C9 · 一笔捺（斜）
+    斜向的一笔，起笔细、收笔厚，像宣纸上写下的第一笔。
+    斜线在满屏竖条图标里辨识度最高 —— 它不是任何常见 UI 符号。
+  -->
+  <defs>
+    <linearGradient id="ink9" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3C7C5C"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#ink9)"/>
+
+  <path d="M15.8 18.4
+           C 20.6 20.8 26.4 25.2 32.4 30.6
+           C 37.4 35.1 42.6 40.2 47.8 44.6
+           C 45.4 47.6 42.2 48.4 38.8 46.6
+           C 33.4 42.2 28.4 37.4 23.8 32.6
+           C 20.8 28.9 17.4 23.6 15.8 18.4 Z"
+        fill="#F8F4EB"/>
+</svg>

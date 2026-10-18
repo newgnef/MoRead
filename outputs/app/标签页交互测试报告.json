@@ -1,0 +1,183 @@
+{
+  "url": "http://127.0.0.1:1420/?theme=light&nowatch=1&ws=C:/Users/LS/AppData/Local/Temp/moread-search-test",
+  "passed": 28,
+  "total": 28,
+  "checks": [
+    {
+      "name": "打开文件即新增标签",
+      "ok": true,
+      "detail": "4 个：api.md / guide.md / mask.md / target.md"
+    },
+    {
+      "name": "拖到目标右半段 → 插到它后面",
+      "ok": true,
+      "detail": "guide.md / mask.md / api.md / target.md"
+    },
+    {
+      "name": "拖回最左 → 插到最前",
+      "ok": true,
+      "detail": "target.md / guide.md / mask.md / api.md"
+    },
+    {
+      "name": "拖拽过程有插入指示线",
+      "ok": true,
+      "detail": "1 处"
+    },
+    {
+      "name": "右键标签弹出菜单",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "菜单含 5 类关闭 + 固定",
+      "ok": true,
+      "detail": "关闭Ctrl+W | 关闭其他标签页 | 关闭左侧标签页 | 关闭右侧标签页 | 关闭全部标签页 | 固定标签页"
+    },
+    {
+      "name": "菜单被收进窗口内",
+      "ok": true,
+      "detail": "{\"x\":182,\"y\":35,\"w\":196,\"h\":198}"
+    },
+    {
+      "name": "关闭左侧只关掉左边的标签",
+      "ok": true,
+      "detail": "target.md/guide.md/mask.md/api.md → guide.md/mask.md/api.md"
+    },
+    {
+      "name": "点菜单项后菜单关闭",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "菜单里是「固定标签页」",
+      "ok": true,
+      "detail": "固定标签页"
+    },
+    {
+      "name": "固定后不再有关闭按钮",
+      "ok": true,
+      "detail": "mask.md"
+    },
+    {
+      "name": "Ctrl+W 关不掉固定标签",
+      "ok": true,
+      "detail": "3 → 3"
+    },
+    {
+      "name": "并给出提示而不是静默失败",
+      "ok": true,
+      "detail": "这个标签已固定，先取消固定再关闭"
+    },
+    {
+      "name": "中键也关不掉固定标签",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "name": "固定标签上「关闭」菜单项是禁用态",
+      "ok": true,
+      "detail": "{\"label\":\"关闭Ctrl+W\",\"disabled\":true}"
+    },
+    {
+      "name": "关闭全部只留下固定标签",
+      "ok": true,
+      "detail": "guide.md/mask.md/api.md → mask.md"
+    },
+    {
+      "name": "菜单变成「取消固定标签页」",
+      "ok": true,
+      "detail": "取消固定标签页"
+    },
+    {
+      "name": "取消固定后关闭按钮回来了",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "补足 3 个标签用于双击测试",
+      "ok": true,
+      "detail": "mask.md / api.md / guide.md / target.md"
+    },
+    {
+      "name": "双击标签即关闭",
+      "ok": true,
+      "detail": "4 → 3"
+    },
+    {
+      "name": "关掉的是被双击的那一个",
+      "ok": true,
+      "detail": "双击「api.md」，剩下：mask.md / guide.md / target.md"
+    },
+    {
+      "name": "其余标签原样保留",
+      "ok": true,
+      "detail": "mask.md / guide.md / target.md"
+    },
+    {
+      "name": "提示里写明了双击关闭",
+      "ok": true,
+      "detail": "C:\\Users\\LS\\AppData\\Local\\Temp\\moread-search-test\\docs\\api.md（双击关闭）"
+    },
+    {
+      "name": "双击固定标签也关不掉",
+      "ok": true,
+      "detail": "3 → 3"
+    },
+    {
+      "name": "并给出固定提示",
+      "ok": true,
+      "detail": "这个标签已固定，先取消固定再关闭"
+    },
+    {
+      "name": "固定标签的提示语不同",
+      "ok": true,
+      "detail": "C:\\Users\\LS\\AppData\\Local\\Temp\\moread-search-test\\docs\\mask.md（已固定，不会被关闭）"
+    },
+    {
+      "name": "双击落在 × 上不会连带关掉邻居",
+      "ok": true,
+      "detail": "3 → 3"
+    },
+    {
+      "name": "真实鼠标双击也能关闭（浏览器合成的 dblclick）",
+      "ok": true,
+      "detail": "双击「guide.md」：3 → 2，剩 mask.md / target.md"
+    }
+  ],
+  "drag": {
+    "before": [
+      "api.md",
+      "guide.md",
+      "mask.md",
+      "target.md"
+    ],
+    "hintShown": 1,
+    "afterForward": [
+      "guide.md",
+      "mask.md",
+      "api.md",
+      "target.md"
+    ],
+    "movingName": "target.md",
+    "afterBack": [
+      "target.md",
+      "guide.md",
+      "mask.md",
+      "api.md"
+    ]
+  },
+  "menuBox": {
+    "x": 182,
+    "y": 35,
+    "w": 196,
+    "h": 198
+  },
+  "screenshots": [
+    "tabs-menu.png",
+    "tabs-only-pinned.png",
+    "tabs-pinned.png",
+    "zoom-tabs.png",
+    "zoom-tabs2-dark.png",
+    "zoom-tabs2.png"
+  ]
+}

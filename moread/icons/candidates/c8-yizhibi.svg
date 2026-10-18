@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 C8 · 一支笔（竖）
+    竖笔：笔身圆头 + 收锋成尖。毛笔的剪影在 16px 也认得出是"笔"，
+    比"两道竖条"明确得多。笔尖本身就是落墨处。
+  -->
+  <defs>
+    <linearGradient id="ink8" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3C7C5C"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#ink8)"/>
+
+  <!-- 笔身 -->
+  <rect x="27.6" y="12.5" width="8.8" height="23" rx="4.4" fill="#F8F4EB"/>
+  <!-- 笔锋：收成一点 -->
+  <path d="M27.6 33.4 Q28.4 42.4 32 51.6 Q35.6 42.4 36.4 33.4 Z" fill="#F8F4EB"/>
+  <!-- 笔尖那一滴墨：用底色点出，让锋尖不至于"秃" -->
+  <circle cx="32" cy="49.4" r="1.5" fill="#3C7C5C" opacity="0.55"/>
+</svg>

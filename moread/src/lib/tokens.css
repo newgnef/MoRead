@@ -1,0 +1,403 @@
+/* ============================================================
+   MoRead · 设计令牌 (Design Tokens)
+   v1.0 · 2026-10-16
+   用法：在 Svelte 入口 import './tokens.css'，然后用 var(--mr-*)
+   主题切换：<html data-theme="dark">
+   ============================================================ */
+
+:root {
+  /* ---------- 表面 Surfaces ---------- */
+  --mr-chrome:          #F4F0E8;  /* 窗口底 / 侧栏底 */
+  --mr-canvas:          #FBFAF7;  /* 阅读画布 */
+  --mr-surface:         #FFFFFF;  /* 卡片 / 激活标签 / 列表 */
+  --mr-surface-code:    #F5F2EA;  /* 代码块底 */
+  --mr-surface-tint:    #F1EDE4;  /* 表头 / 引用块底 */
+  --mr-surface-track:   #E9E4D9;  /* 分段控件轨道 / 悬浮底 */
+
+  /* ---------- 描边 Borders（本设计零阴影，全靠细线） ---------- */
+  --mr-border:          #E5DFD0;  /* 主分隔线 */
+  --mr-border-soft:     #EFECE6;  /* 组内分隔线 */
+  --mr-border-strong:   #D4CCB5;  /* 控件描边 */
+
+  /* ---------- 文字 Text（由强到弱 6 级） ---------- */
+  --mr-text-1:          #1F1E1B;  /* 标题 / 主标签 */
+  --mr-text-2:          #3A3833;  /* 正文 */
+  --mr-text-3:          #5C5A55;  /* 次级标签 / 引用 */
+  --mr-text-4:          #8A8578;  /* 图标 / 代码注释 */
+  --mr-text-5:          #938D80;  /* 元信息 / 字段描述 */
+  --mr-text-6:          #A39D8F;  /* 时间戳 / 未激活图标 */
+
+  /* ---------- 强调 Accent ---------- */
+  --mr-accent:          #2F6B4F;  /* 松墨绿 */
+  --mr-accent-strong:   #245B41;  /* 悬停 / 代码变量 */
+  --mr-accent-soft:     #E3E9DE;  /* 选中行底 */
+  --mr-accent-armor:    #DCE4D8;  /* 引用块描边 */
+  --mr-bronze:          #B89968;  /* 文件夹 / 次级点缀 */
+  --mr-warn-bg:         #FBF0DC;
+  --mr-warn:            #B89968;
+
+  /* ---------- 字体 Families ---------- */
+  --mr-font-sans: "Noto Sans SC", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  --mr-font-serif: "Source Han Serif CN", "Noto Serif SC", Georgia, "Songti SC", serif;
+  --mr-font-mono: "JetBrains Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  --mr-font-latin: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /*
+    正文缩放系数（1 = 正文 15px）。
+    只作用于阅读域 —— .mr-article 拿它重算自己那份字号与行高，
+    标签页 / 侧栏 / 面板读的仍是下面的原值，一个字都不放大。
+    由 JS 写进 documentElement.style，首帧由 theme-boot.js 抢先落定。
+  */
+  --mr-read-scale: 1;
+
+  /* ---------- 字号阶梯 Type Scale ---------- */
+  --mr-fs-display: 38px;  --mr-lh-display: 46px;  /* 文档 H1，serif 700 */
+  --mr-fs-h1:      30px;  --mr-lh-h1:      38px;  /* 空态字标，serif 700 */
+  --mr-fs-h2:      23px;  --mr-lh-h2:      30px;  /* 文档 H2，serif 600 */
+  --mr-fs-h3:      18px;  --mr-lh-h3:      26px;  /* 文档 H3，sans 500 */
+  --mr-fs-sect:    15px;  --mr-lh-sect:    22px;  /* 分区标题，sans 500 */
+  --mr-fs-lead:    15.5px;--mr-lh-lead:    27px;  /* 引用，serif 400 */
+  --mr-fs-body:    15px;  --mr-lh-body:    26px;  /* 正文，sans 400 */
+  --mr-fs-body-sm: 13.5px;--mr-lh-body-sm: 24px;  /* 说明段，sans 400 */
+  --mr-fs-ui:      13px;  --mr-lh-ui:      20px;  /* 设置项 / 按钮，sans 500 */
+  --mr-fs-ui-sm:   12.5px;--mr-lh-ui-sm:   18px;  /* 标签页 / 树项，sans 500 */
+  --mr-fs-meta:    12px;  --mr-lh-meta:    18px;  /* 次要说明，sans 400 */
+  --mr-fs-meta-sm: 11.5px;--mr-lh-meta-sm: 17px;  /* 字段描述 / 片段 */
+  --mr-fs-meta-xs: 11px;  --mr-lh-meta-xs: 16px;  /* 计数 / 提示 */
+  --mr-fs-code:    12.5px;--mr-lh-code:    20px;  /* 代码，mono 400 */
+
+  /* ---------- 字重 ---------- */
+  --mr-fw-regular: 400;
+  --mr-fw-medium:  500;
+  --mr-fw-semi:    600;
+  --mr-fw-bold:    700;
+
+  /* ---------- 圆角 Radius（克制，最大 8） ---------- */
+  --mr-radius-xs:  3px;   /* 进度条 / 细块 */
+  --mr-radius-sm:  4px;   /* 树项 / 分段选项 / 表格 */
+  --mr-radius-md:  6px;   /* 按钮 / 输入 / 标签 / 代码块 */
+  --mr-radius-lg:  8px;   /* 卡片 / 列表面板 / 设置面板 */
+  --mr-radius-pill:11px;  /* 开关 */
+  --mr-radius-full:999px;
+
+  /* ---------- 间距 Spacing（4 基准） ---------- */
+  --mr-sp-1:  4px;
+  --mr-sp-2:  8px;
+  --mr-sp-3:  12px;
+  --mr-sp-4:  16px;
+  --mr-sp-5:  20px;
+  --mr-sp-6:  24px;
+  --mr-sp-8:  32px;
+  --mr-sp-10: 40px;
+  --mr-sp-16: 64px;
+
+  /* ---------- 布局常量 Layout ---------- */
+  --mr-titlebar-h:    40px;   /* 标题栏 + 标签栏合并一行 */
+  --mr-tab-h:         30px;
+  --mr-tabstrip-h:    34px;
+  --mr-toolbar-h:     48px;
+  --mr-sidebar-w:     240px;  /* 可调 200 – 480 */
+  --mr-rail-w:        44px;   /* 侧栏收起后的图标栏 */
+  --mr-row-h:         28px;   /* 树行 */
+  --mr-listrow-h:     56px;   /* 最近打开行 */
+  --mr-btn-h:         38px;
+  --mr-ctrl-h:        30px;
+  --mr-input-h:       32px;
+  --mr-reading-w:     680px;  /* 阅读列宽，可调 600 – 1400 */
+  --mr-settings-w:    820px;
+  --mr-empty-panel-w: 560px;
+
+  /* ---------- 动效 Motion ---------- */
+  --mr-dur-hover:  120ms;
+  --mr-dur-panel:  200ms;
+  --mr-dur-theme:  0ms;     /* 主题切换刻意不做过渡，避免闪白 */
+  --mr-ease-out:   cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---------- 阴影（全站仅此一处，且只用于浮层） ---------- */
+  --mr-shadow-popover: 0 4px 16px rgba(31, 30, 27, 0.10);
+}
+
+/* ============================================================
+   深色主题 · 暖墨
+   ============================================================ */
+[data-theme="dark"] {
+  --mr-chrome:          #141413;
+  --mr-canvas:          #1C1B19;
+  --mr-surface:         #2A2825;
+  --mr-surface-code:    #232220;
+  --mr-surface-tint:    #232220;
+  --mr-surface-track:   #201F1C;
+
+  --mr-border:          #302E29;
+  --mr-border-soft:     #262521;
+  --mr-border-strong:   #3A3833;
+
+  --mr-text-1:          #EDE9E1;
+  --mr-text-2:          #C9C4BB;
+  --mr-text-3:          #A9A49A;
+  --mr-text-4:          #8A8578;
+  --mr-text-5:          #7A756C;
+  --mr-text-6:          #6E6963;
+
+  --mr-accent:          #7FB894;
+  --mr-accent-strong:   #9CCBAB;
+  --mr-accent-soft:     #26332A;
+  --mr-accent-armor:    #2E3A32;
+  --mr-bronze:          #C8A876;
+  --mr-warn-bg:         #2E2519;
+  --mr-warn:            #C8A876;
+
+  --mr-shadow-popover: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+   主题族：纸 / 竹青 / 天青
+   ------------------------------------------------------------
+   两轴模型：data-theme 决定浅深，data-palette 决定色调。
+   所以每套色调要写两个块：浅色块 = [data-palette="x"]，
+   深色块 = [data-palette="x"][data-theme="dark"]。
+   深色块权重更高（两个属性选择器），能压过基础深色块；顺序无所谓，
+   但仍按"浅在前深在后"排，读起来和上面对得上。
+
+   只覆盖"需要变"的东西：字体、字号、圆角、间距、阴影全与主题无关，
+   bronze / warn 这些暖色点缀在三套色纸上都成立，不跟着变。
+   ============================================================ */
+
+/* ---------- 竹青 · 浅（宣纸偏青） ---------- */
+[data-palette="moss"] {
+  --mr-chrome:          #EDF2E8;
+  --mr-canvas:          #F7FAF3;
+  --mr-surface:         #FFFFFF;
+  --mr-surface-code:    #F1F6EB;
+  --mr-surface-tint:    #EAF0E2;
+  --mr-surface-track:   #E2E9D9;
+
+  --mr-border:          #DCE4D1;
+  --mr-border-soft:     #E8EEE0;
+  --mr-border-strong:   #C9D5BB;
+
+  --mr-text-1:          #1D211B;
+  --mr-text-2:          #343B31;
+  --mr-text-3:          #515B4D;
+  --mr-text-4:          #7D8878;
+  --mr-text-5:          #86917F;
+  --mr-text-6:          #97A28F;
+
+  --mr-accent:          #2F6B4F;
+  --mr-accent-strong:   #245B41;
+  --mr-accent-soft:     #E1EAD8;
+  --mr-accent-armor:    #D6E2CB;
+}
+
+/* ---------- 墨绿 · 深 ---------- */
+[data-palette="moss"][data-theme="dark"] {
+  --mr-chrome:          #0E1310;
+  --mr-canvas:          #141A15;
+  --mr-surface:         #1D251F;
+  --mr-surface-code:    #171E19;
+  --mr-surface-tint:    #171E19;
+  --mr-surface-track:   #131A15;
+
+  --mr-border:          #273129;
+  --mr-border-soft:     #1F2721;
+  --mr-border-strong:   #33402F;
+
+  --mr-text-1:          #E6EDE2;
+  --mr-text-2:          #C2CDBC;
+  --mr-text-3:          #9FAB99;
+  --mr-text-4:          #84917D;
+  --mr-text-5:          #74816D;
+  --mr-text-6:          #67735F;
+
+  --mr-accent:          #7FB894;
+  --mr-accent-strong:   #9CCBAB;
+  --mr-accent-soft:     #1F2E24;
+  --mr-accent-armor:    #25352A;
+}
+
+/* ---------- 天青 · 浅（雨后青白） ---------- */
+[data-palette="blue"] {
+  --mr-chrome:          #ECF1F7;
+  --mr-canvas:          #F7FAFD;
+  --mr-surface:         #FFFFFF;
+  --mr-surface-code:    #F1F5FA;
+  --mr-surface-tint:    #E9EFF6;
+  --mr-surface-track:   #E1E8F1;
+
+  --mr-border:          #DAE2EC;
+  --mr-border-soft:     #E8EEF4;
+  --mr-border-strong:   #C5D1E0;
+
+  --mr-text-1:          #1A1F26;
+  --mr-text-2:          #333A44;
+  --mr-text-3:          #4F5A67;
+  --mr-text-4:          #7C8794;
+  --mr-text-5:          #8590A0;
+  --mr-text-6:          #96A1AF;
+
+  --mr-accent:          #2F6796;
+  --mr-accent-strong:   #24527A;
+  --mr-accent-soft:     #E2EBF4;
+  --mr-accent-armor:    #D8E4F0;
+}
+
+/* ---------- 深蓝 · 深 ---------- */
+[data-palette="blue"][data-theme="dark"] {
+  --mr-chrome:          #0D1218;
+  --mr-canvas:          #121821;
+  --mr-surface:         #1A212B;
+  --mr-surface-code:    #151C25;
+  --mr-surface-tint:    #151C25;
+  --mr-surface-track:   #111720;
+
+  --mr-border:          #25303B;
+  --mr-border-soft:     #1C242E;
+  --mr-border-strong:   #31404E;
+
+  --mr-text-1:          #E4EAF1;
+  --mr-text-2:          #BFC9D4;
+  --mr-text-3:          #9BA7B4;
+  --mr-text-4:          #7F8B99;
+  --mr-text-5:          #717D8B;
+  --mr-text-6:          #64707E;
+
+  --mr-accent:          #7FB3E0;
+  --mr-accent-strong:   #A2CBEF;
+  --mr-accent-soft:     #1B2836;
+  --mr-accent-armor:    #22303F;
+}
+
+/* ============================================================
+   基础重置（配合令牌使用）
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--mr-chrome);
+  color: var(--mr-text-1);
+  font-family: var(--mr-font-sans);
+  font-size: var(--mr-fs-body);
+  line-height: var(--mr-lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 主题切换不做过渡动画 */
+html { transition: none; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::selection { background: var(--mr-accent-soft); color: var(--mr-text-1); }
+
+/* 焦点环：全键盘可达的前提 */
+:focus-visible {
+  outline: 2px solid var(--mr-accent);
+  outline-offset: 2px;
+  border-radius: var(--mr-radius-sm);
+}
+
+/* ---------- 阅读正文容器（Markdown 渲染区） ---------- */
+/*
+ * 阅读域字号 = 基准阶梯 × --mr-read-scale。
+ *
+ * 为什么在 .mr-article 上重定义而不是直接改 :root：
+ * 阅读器的"字体大小"只该影响文章，工具栏跟着忽大忽小是灾难。
+ * 自定义属性按元素解析，所以这里覆盖的 11 组值只对正文子树生效，
+ * 且所有下游样式（p / h2 / code / table / KaTeX 的 em）自动跟着走，无需逐条改。
+ */
+.mr-article {
+  width: var(--mr-reading-w);
+  margin: 0 auto;
+  color: var(--mr-text-2);
+  font-family: var(--mr-font-sans);
+
+  --mr-fs-display: calc(38px   * var(--mr-read-scale));
+  --mr-lh-display: calc(46px   * var(--mr-read-scale));
+  --mr-fs-h1:      calc(30px   * var(--mr-read-scale));
+  --mr-lh-h1:      calc(38px   * var(--mr-read-scale));
+  --mr-fs-h2:      calc(23px   * var(--mr-read-scale));
+  --mr-lh-h2:      calc(30px   * var(--mr-read-scale));
+  --mr-fs-h3:      calc(18px   * var(--mr-read-scale));
+  --mr-lh-h3:      calc(26px   * var(--mr-read-scale));
+  --mr-fs-sect:    calc(15px   * var(--mr-read-scale));
+  --mr-lh-sect:    calc(22px   * var(--mr-read-scale));
+  --mr-fs-lead:    calc(15.5px * var(--mr-read-scale));
+  --mr-lh-lead:    calc(27px   * var(--mr-read-scale));
+  --mr-fs-body:    calc(15px   * var(--mr-read-scale));
+  --mr-lh-body:    calc(26px   * var(--mr-read-scale));
+  --mr-fs-body-sm: calc(13.5px * var(--mr-read-scale));
+  --mr-lh-body-sm: calc(24px   * var(--mr-read-scale));
+  --mr-fs-meta:    calc(12px   * var(--mr-read-scale));
+  --mr-lh-meta:    calc(18px   * var(--mr-read-scale));
+  --mr-fs-meta-sm: calc(11.5px * var(--mr-read-scale));
+  --mr-lh-meta-sm: calc(17px   * var(--mr-read-scale));
+  --mr-fs-meta-xs: calc(11px   * var(--mr-read-scale));
+  --mr-lh-meta-xs: calc(16px   * var(--mr-read-scale));
+  --mr-fs-code:    calc(12.5px * var(--mr-read-scale));
+  --mr-lh-code:    calc(20px   * var(--mr-read-scale));
+
+  font-size: var(--mr-fs-body);
+  line-height: var(--mr-lh-body);
+}
+.mr-article h1 { font: var(--mr-fw-bold) var(--mr-fs-display)/var(--mr-lh-display) var(--mr-font-serif); color: var(--mr-text-1); margin: 0; }
+.mr-article h2 { font: var(--mr-fw-semi) var(--mr-fs-h2)/var(--mr-lh-h2) var(--mr-font-serif); color: var(--mr-text-1); margin: 0; }
+.mr-article h3 { font: var(--mr-fw-medium) var(--mr-fs-h3)/var(--mr-lh-h3) var(--mr-font-sans); color: var(--mr-text-1); margin: 0; }
+.mr-article p  { margin: 0; }
+.mr-article a  { color: var(--mr-accent); text-decoration: none; border-bottom: 1px solid var(--mr-accent-soft); }
+.mr-article a:hover { color: var(--mr-accent-strong); border-bottom-color: var(--mr-accent); }
+
+.mr-article code {
+  font-family: var(--mr-font-mono);
+  font-size: var(--mr-fs-code);
+  background: var(--mr-surface-code);
+  padding: 1px 5px;
+  border-radius: var(--mr-radius-sm);
+}
+
+/* 代码块 */
+.mr-codeblock {
+  background: var(--mr-surface-code);
+  border: 1px solid var(--mr-border);
+  border-radius: var(--mr-radius-md);
+  overflow: hidden;
+}
+.mr-codeblock__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px 8px 14px;
+  border-bottom: 1px solid var(--mr-border);
+}
+.mr-codeblock__lang { font-family: var(--mr-font-mono); font-size: var(--mr-fs-meta-xs); color: var(--mr-text-4); }
+.mr-codeblock__body {
+  padding: 10px 14px 14px;
+  font-family: var(--mr-font-mono);
+  font-size: var(--mr-fs-code);
+  line-height: var(--mr-lh-code);
+  color: var(--mr-text-1);
+  white-space: pre;
+  overflow-x: auto;
+}
+.mr-codeblock__body .cmt { color: var(--mr-text-4); }
+.mr-codeblock__body .var { color: var(--mr-accent-strong); }
+
+/* 表格 */
+.mr-table { border: 1px solid var(--mr-border); border-radius: var(--mr-radius-md); overflow: hidden; }
+.mr-table table { width: 100%; border-collapse: collapse; font-size: var(--mr-fs-body-sm); }
+.mr-table th { background: var(--mr-surface-tint); color: var(--mr-text-3); font-weight: var(--mr-fw-medium); font-size: var(--mr-fs-meta); text-align: left; }
+.mr-table th, .mr-table td { padding: 9px 14px; border-bottom: 1px solid var(--mr-border-soft); }
+.mr-table tr:last-child td { border-bottom: none; }
+.mr-table td { color: var(--mr-text-2); }
+
+/* 引用块 */
+.mr-quote {
+  background: var(--mr-surface-tint);
+  border: 1px solid var(--mr-accent-armor);
+  border-radius: var(--mr-radius-md);
+  padding: 14px 18px;
+  color: var(--mr-text-2);
+  font-family: var(--mr-font-serif);
+  font-size: var(--mr-fs-lead);
+  line-height: var(--mr-lh-lead);
+}

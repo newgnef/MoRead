@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- book9 · 翼展 + 书签 -->
+  <defs>
+    <linearGradient id="bk9" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+    <linearGradient id="pg9" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#FDFAF3"/>
+      <stop offset="1" stop-color="#EBE3D1"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#bk9)"/>
+
+  <path d="M32 27.6
+           C27.6 23.0 19.8 17.4 14.4 16.4
+           C12.0 15.9 10.8 17.0 11.0 19.2
+           L12.2 37.6
+           C12.5 40.4 14.0 41.7 16.6 42.1
+           C22.2 43.0 28.4 44.0 32 45.8
+           C35.6 44.0 41.8 43.0 47.4 42.1
+           C50.0 41.7 51.5 40.4 51.8 37.6
+           L53.0 19.2
+           C53.2 17.0 52.0 15.9 49.6 16.4
+           C44.2 17.4 36.4 23.0 32 27.6
+           Z"
+        fill="url(#pg9)"/>
+
+  <path d="M32 28.2 V 41.2"
+        stroke="#1E3F30" stroke-width="4.2" stroke-linecap="round"/>
+
+  <!-- 书签：自左页上缘垂入，末端收 V 形缺口 -->
+  <path d="M17.4 16.9 L22.6 18.0 L22.6 30.4 L20.0 28.2 L17.4 30.4 Z"
+        fill="#C9A46A"/>
+</svg>

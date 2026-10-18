@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 B2 · 圆相砚墨
+    B 在 16px 会被读成「加载中」：缺口太大 + 笔画太细，末端像箭头。
+    改法：缺口从 70° 收到 38°，笔画加粗到 6.2，点放大并下沉一点。
+  -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#F8F4EB"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#1F2A24" stroke-width="2.4"/>
+
+  <!-- 起笔 -19°、收笔 -57°，顺时针 322° -->
+  <path d="M43.6 24.2A18.2 18.2 0 1 1 36.5 14.6"
+        fill="none" stroke="#1F2A24" stroke-width="6.2" stroke-linecap="round"/>
+
+  <circle cx="32" cy="35.5" r="5.6" fill="#2F6B4F"/>
+</svg>

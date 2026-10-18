@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    book10 · 定稿取向：翼展书页，外角改用 Q 收圆。
+    book7 的尖外角在 16px 会磨出半透明白毛刺，收成小圆角后剪影干净，
+    而 128px 下那点圆角反而更像纸张的软边。
+  -->
+  <defs>
+    <linearGradient id="bk10" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7E5E"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+    <linearGradient id="pg10" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#FDFAF3"/>
+      <stop offset="1" stop-color="#EBE3D1"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#bk10)"/>
+
+  <path d="M32 28.0
+           C27.8 23.6 20.6 18.4 15.4 17.4
+           Q 11.6 16.6 11.5 19.8
+           L12.3 37.4
+           C12.6 40.3 14.2 41.6 16.8 42.0
+           C22.4 42.9 28.6 43.9 32 45.7
+           C35.4 43.9 41.6 42.9 47.2 42.0
+           C49.8 41.6 51.4 40.3 51.7 37.4
+           L52.5 19.8
+           Q 52.4 16.6 48.6 17.4
+           C 43.4 18.4 36.2 23.6 32 28.0
+           Z"
+        fill="url(#pg10)"/>
+
+  <path d="M32 28.6 V 41.4"
+        stroke="#1B3A2C" stroke-width="4.2" stroke-linecap="round"/>
+</svg>

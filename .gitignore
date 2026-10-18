@@ -1,0 +1,25 @@
+# ---------------- 依赖与构建产物 ----------------
+# 注意带中间斜杠的路径必须写明相对位置：
+# `src-tauri/target/` 只匹配仓库根下的同名目录，工程在 moread/ 里就漏掉了
+node_modules/
+**/dist/
+moread/src-tauri/target/
+moread/src-tauri/gen/
+
+# ---------------- 打包出来的二进制 ----------------
+# 5MB 的 exe 进仓库只会把 clone 拖慢，发布时走 Releases 更合适
+outputs/app/*.exe
+outputs/app/*.msi
+
+# ---------------- 本机环境 ----------------
+.workbuddy/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+*.log
+
+# ---------------- 编辑器 ----------------
+.vscode/*
+!.vscode/extensions.json
+.idea/

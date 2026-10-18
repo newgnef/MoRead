@@ -1,0 +1,67 @@
+{
+  "url": "http://127.0.0.1:1420/?theme=light&ws=C:/Users/LS/AppData/Local/Temp/moread-bigdocs",
+  "checks": [
+    {
+      "name": "搜到「Section1000Plugin」",
+      "ok": true,
+      "detail": "1 条命中"
+    },
+    {
+      "name": "长文档确实走虚拟化路径",
+      "ok": true,
+      "detail": "blocks=14095 渲染元素=20"
+    },
+    {
+      "name": "点击后滚动位置不在文档开头",
+      "ok": true,
+      "detail": "scrollTop=868048"
+    },
+    {
+      "name": "目标代码在视口内可见",
+      "ok": true,
+      "detail": "top=136px / 视口 721px ·  Section1000Plugin"
+    },
+    {
+      "name": "视口内的节标题不早于第 1000 节",
+      "ok": true,
+      "detail": "第 1001 节 · 生产计划汇总"
+    },
+    {
+      "name": "定位记录指向本次点击的序号",
+      "ok": true,
+      "detail": "{\"needle\":\"Section1000Plugin\",\"ordinal\":0,\"block\":7001,\"offset\":19}"
+    },
+    {
+      "name": "「PC-1000」在同一节内有多处命中",
+      "ok": true,
+      "detail": "2 条"
+    },
+    {
+      "name": "第 1 条命中定位到列表项所在块",
+      "ok": true,
+      "detail": "ordinal=0 block=7000"
+    },
+    {
+      "name": "第 2 条命中定位到另一个块",
+      "ok": true,
+      "detail": "ordinal=1 block=7002"
+    },
+    {
+      "name": "两次定位的滚动位置不同",
+      "ok": true,
+      "detail": "867852 → 868231"
+    },
+    {
+      "name": "深处命中的块号与文档尺寸相称",
+      "ok": true,
+      "detail": "block=7001"
+    }
+  ],
+  "passed": 11,
+  "total": 11,
+  "sample": {
+    "deep": "Section1000Plugin",
+    "multi": "PC-1000",
+    "deepBlock": 7001
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "checks": [
+    {
+      "name": "暖纸：html 上两个属性都对",
+      "ok": true,
+      "detail": "theme=light palette=paper"
+    },
+    {
+      "name": "暖墨：html 上两个属性都对",
+      "ok": true,
+      "detail": "theme=dark palette=paper"
+    },
+    {
+      "name": "竹青：html 上两个属性都对",
+      "ok": true,
+      "detail": "theme=light palette=moss"
+    },
+    {
+      "name": "墨绿：html 上两个属性都对",
+      "ok": true,
+      "detail": "theme=dark palette=moss"
+    },
+    {
+      "name": "天青：html 上两个属性都对",
+      "ok": true,
+      "detail": "theme=light palette=blue"
+    },
+    {
+      "name": "深蓝：html 上两个属性都对",
+      "ok": true,
+      "detail": "theme=dark palette=blue"
+    },
+    {
+      "name": "六套底色互不相同（漏写 CSS 块会在这里露馅）",
+      "ok": true,
+      "detail": "6 种：#F4F0E8 #141413 #EDF2E8 #0E1310 #ECF1F7 #0D1218"
+    },
+    {
+      "name": "六套画布色互不相同",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "强调色按色调分组：竹青两档同色系、天青两档同色系",
+      "ok": true,
+      "detail": "#2F6B4F #7FB894 #2F6B4F #7FB894 #2F6796 #7FB3E0"
+    },
+    {
+      "name": "右上角图标能打开外观面板",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "面板里是 3 色调 × 2 浅深 = 6 张色卡",
+      "ok": true,
+      "detail": "6 张"
+    },
+    {
+      "name": "行是色调名、列是浅色/深色",
+      "ok": true,
+      "detail": "暖纸/竹青/天青 | 浅色/深色"
+    },
+    {
+      "name": "当前主题有且只有一个选中环",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "面板不超出窗口",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "按钮提示写着当前主题",
+      "ok": true,
+      "detail": "外观：暖纸 · 浅色"
+    },
+    {
+      "name": "点「墨绿」色卡：整窗立刻切换",
+      "ok": true,
+      "detail": "theme=dark palette=moss"
+    },
+    {
+      "name": "选择写进 localStorage",
+      "ok": true,
+      "detail": "dark/moss"
+    },
+    {
+      "name": "选中环转移过去了（仍然只有一个）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "面板保持打开，方便连着比较几套",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "打开「跟随系统」→ 存储改成 system",
+      "ok": true,
+      "detail": "stored=system"
+    },
+    {
+      "name": "关掉「跟随系统」→ 钉住当前浅深，不跳回旧值",
+      "ok": true,
+      "detail": "stored=light 当前=light"
+    },
+    {
+      "name": "Esc 关闭面板",
+      "ok": true,
+      "detail": "开=true 关=true"
+    },
+    {
+      "name": "重开窗口仍记得选的主题",
+      "ok": true,
+      "detail": "选的是 moss/dark，重载后 theme=dark palette=moss"
+    },
+    {
+      "name": "HTML 上带有两个主题属性（首帧即定，不会先暖纸再跳）",
+      "ok": true,
+      "detail": "dark/moss"
+    }
+  ],
+  "seen": [
+    {
+      "label": "暖纸",
+      "chrome": "#F4F0E8",
+      "canvas": "#FBFAF7",
+      "accent": "#2F6B4F",
+      "text1": "#1F1E1B"
+    },
+    {
+      "label": "暖墨",
+      "chrome": "#141413",
+      "canvas": "#1C1B19",
+      "accent": "#7FB894",
+      "text1": "#EDE9E1"
+    },
+    {
+      "label": "竹青",
+      "chrome": "#EDF2E8",
+      "canvas": "#F7FAF3",
+      "accent": "#2F6B4F",
+      "text1": "#1D211B"
+    },
+    {
+      "label": "墨绿",
+      "chrome": "#0E1310",
+      "canvas": "#141A15",
+      "accent": "#7FB894",
+      "text1": "#E6EDE2"
+    },
+    {
+      "label": "天青",
+      "chrome": "#ECF1F7",
+      "canvas": "#F7FAFD",
+      "accent": "#2F6796",
+      "text1": "#1A1F26"
+    },
+    {
+      "label": "深蓝",
+      "chrome": "#0D1218",
+      "canvas": "#121821",
+      "accent": "#7FB3E0",
+      "text1": "#E4EAF1"
+    }
+  ]
+}

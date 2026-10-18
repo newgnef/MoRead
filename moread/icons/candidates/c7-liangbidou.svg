@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 C7 · 两笔 + 句读
+    C5 的两道竖笔在 16px 会被读成「||」。补一枚竖排文字里的句读点
+    （写在字行右侧的那个小点），既是排版符号，也把"竖排文字"这件事点明。
+  -->
+  <defs>
+    <linearGradient id="ink7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3C7C5C"/>
+      <stop offset="1" stop-color="#245039"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="url(#ink7)"/>
+
+  <path d="M20.5 23.5 Q20.5 20 24 20 Q27.5 20 27.5 23.5 L25.9 37 Q24 40.5 22.1 37 Z" fill="#F8F4EB"/>
+  <path d="M33.5 21.5 Q33.5 18 37 18 Q40.5 18 40.5 21.5 L38.9 45 Q37 48.5 35.1 45 Z" fill="#F8F4EB"/>
+
+  <!-- 句读点 -->
+  <circle cx="44.6" cy="23.2" r="2.6" fill="#F8F4EB" opacity="0.92"/>
+</svg>

@@ -1,0 +1,27 @@
+
+running 12 tests
+test tests::host_info_reports_home_and_drives ... ok
+test tests::search_truncates_at_limit_and_flags_it ... ok
+test tests::search_counts_multi_hits_and_numbers_them_in_order ... ok
+test tests::search_masks_link_targets_but_keeps_visible_text ... ok
+test tests::list_dir_respects_depth_cap ... ok
+test tests::read_text_file_decodes_utf8_and_gbk ... ok
+test tests::search_is_case_insensitive_by_default_and_can_be_tightened ... ok
+test tests::list_dir_rejects_missing_and_file_targets ... ok
+test tests::search_skips_binary_and_huge_files ... ok
+test tests::search_handles_empty_query_and_empty_tree ... ok
+test tests::read_text_file_refuses_binary_dir_and_missing ... ok
+test tests::list_dir_keeps_markdown_and_skips_noise ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

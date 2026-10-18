@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    方案 A · 墨落简上
+    纸为底、简为骨、墨为神：一枚墨滴正落在两道竹简之间。
+    对称构图 —— 16px 下左右各一道竖条 + 上方一点，形不散。
+  -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#F8F4EB"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#1F2A24" stroke-width="2.4"/>
+
+  <!-- 两道竹简 -->
+  <rect x="20.5" y="30" width="6.5" height="22" rx="3.25" fill="#1F2A24"/>
+  <rect x="37" y="30" width="6.5" height="22" rx="3.25" fill="#1F2A24"/>
+
+  <!-- 墨滴：上尖下圆，笔尖垂下的一滴 -->
+  <path d="M32 11.5c4.6 5.2 7.2 8.7 7.2 12.1 0 4.2-3.2 7.4-7.2 7.4s-7.2-3.2-7.2-7.4c0-3.4 2.6-6.9 7.2-12.1z" fill="#1F2A24"/>
+
+  <!-- 落墨的尾巴：一道极细的干笔，把墨与简连起来 -->
+  <path d="M32 31.8v2.6" stroke="#1F2A24" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+</svg>
