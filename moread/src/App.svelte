@@ -584,9 +584,17 @@
       const wsParam = new URLSearchParams(location.search).get('ws');
       const initialWs = wsParam || workspacePath;
 
+      /*
+        页签默认落在大纲（`sidebarMode` 的初值），打开软件先看到"这一篇有哪些节"。
+        两条例外，都不该按默认走：
+        - 显式给了 ?ws：那是来浏览这片目录的（截图与自动化也依赖文件树直接可见）
+        - 用户自己挑了个文件夹：见 openWorkspace 里的 changed 分支
+        恢复上次会话不算例外 —— 用户什么都没点，就该落到默认。
+      */
+      if (wsParam) sidebarMode = 'files';
+
       if (isTauri) {
         stopNativeDrop = await setupNativeDrop();
-        sidebarMode = 'files';
 
         // 文件关联：**先挂监听，再取队列** —— 顺序反过来，
         // 两步之间进来的请求就没人接了（冷启动双击 .md 正是这条路径）。
@@ -602,7 +610,6 @@
           void openWorkspace(initialWs, { silent: true });
         }
       } else if (backend === 'http' && initialWs) {
-        sidebarMode = 'files';
         void openWorkspace(initialWs, { silent: true });
       }
 
@@ -669,6 +676,8 @@
     }
 
     pushRecentWorkspace(root);
+    // 换了一片目录 → 给文件树（用户刚点完文件夹，多半就是想浏览它）。
+    // 恢复上次会话时 changed 为 false，页签保持在默认的大纲。
     if (changed) sidebarMode = 'files';
 
     // 首次进入工作区若还没有打开的文档，自动打开第一篇 —— 少一次点击。

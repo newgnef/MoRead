@@ -133,8 +133,8 @@ try {
 
   /* ---------------- 1. 侧栏的三个页签 ---------------- */
   const modes = await cdp.eval(`[...document.querySelectorAll('.sidebar__tab')].map(b => b.textContent.trim())`);
-  check('侧栏页签变成 文件 / 大纲 / 历史', JSON.stringify(modes) === JSON.stringify(['文件', '大纲', '历史']),
-    JSON.stringify(modes));
+  check('侧栏页签变成 大纲 / 文件 / 历史（大纲第一）',
+    JSON.stringify(modes) === JSON.stringify(['大纲', '文件', '历史']), JSON.stringify(modes));
   check('侧栏里已经没有搜索入口', await cdp.eval(`!document.querySelector('.search-input')`));
 
   /* ---------------- 2. 打开 5 篇，攒出历史 ---------------- */
@@ -229,6 +229,28 @@ try {
   check('刷新后旧记录没有回来（只剩自动打开的那篇）',
     persisted.count <= 1 && !persisted.items.some((i) => i.name === 'doc-3.md'),
     `${persisted.count} 条：${persisted.items.map((i) => i.name).join(',')}`);
+
+  /* ---------------- 7. 默认页签：大纲 ---------------- */
+  /*
+    模拟一次真实启动：URL 上不带 ?ws，只把工作区留在 localStorage 里让它自己恢复。
+    带 ?ws 是"显式指定目录"，按约定直接落到文件树，代表不了默认行为。
+  */
+  await cdp.eval(`localStorage.setItem('moread.workspace', ${JSON.stringify(WS)})`);
+  await cdp.send('Page.navigate', { url: 'http://127.0.0.1:1420/?theme=light&nowatch=1' });
+  await waitFor(cdp, `!!document.querySelector('.sidebar')`, { timeoutMs: 60000, label: '恢复会话' });
+  await sleep(1000);
+
+  const boot = await cdp.eval(`(() => ({
+    tabs: [...document.querySelectorAll('.sidebar__tab')].map(b => b.textContent.trim()),
+    active: document.querySelector('.sidebar__tab.is-active')?.textContent.trim() ?? '',
+    hasTree: !!document.querySelector('.trow--file'),
+    outlineRows: document.querySelectorAll('.outline-item').length,
+  }))()`);
+  check('页签顺序是 大纲 / 文件 / 历史',
+    JSON.stringify(boot.tabs) === JSON.stringify(['大纲', '文件', '历史']), JSON.stringify(boot.tabs));
+  check('恢复上次会话后默认停在大纲', boot.active === '大纲', boot.active);
+  check('默认不铺文件树（那是文件页签的内容）', !boot.hasTree);
+  check('大纲里已经有条目（自动打开的那篇）', boot.outlineRows > 0, `${boot.outlineRows} 行`);
 
   const fails = checks.filter((c) => !c.ok);
   console.log(`\n${checks.length - fails.length}/${checks.length} 通过`);

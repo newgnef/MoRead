@@ -49,9 +49,10 @@
   /** 目录折叠状态：默认全部展开，只记「被折叠的」 */
   let collapsed = $state<Record<string, boolean>>({});
 
+  // 大纲第一：阅读器里最常做的是"翻到哪一节"，而不是"换一篇文件"
   const MODES: { id: SidebarMode; label: string }[] = [
-    { id: 'files', label: '文件' },
     { id: 'outline', label: '大纲' },
+    { id: 'files', label: '文件' },
     { id: 'history', label: '历史' },
   ];
 

@@ -17,9 +17,10 @@
    * 彻底藏起来之后唯一的回头路是 Ctrl+B，而这正是没人记得住的快捷键。
    * 留三个图标等于把入口缩到最小，同时把"展开"这件事摆到脸上。
    */
+  // 顺序与侧栏页签一致：大纲 / 文件 / 历史
   const ITEMS: { id: SidebarMode; icon: string; label: string }[] = [
-    { id: 'files', icon: 'folder', label: '文件' },
     { id: 'outline', icon: 'apps', label: '大纲' },
+    { id: 'files', icon: 'folder', label: '文件' },
     { id: 'history', icon: 'clock', label: '历史' },
   ];
 
