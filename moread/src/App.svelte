@@ -303,20 +303,20 @@
   let searchTimer: number | null = null;
 
   /**
-   * 分组排序：当前打开的那篇排最前（多半就是用户正在看的），其余按文件名排。
+   * 分组排序：只按文件名，**不随交互变化**。
+   *
+   * 早先这里做过「当前打开的那篇排最前」，实际用起来很糟：点一条结果之后
+   * 活动标签就变了，整张列表跟着重排，用户正要点第二条时它换到了别处。
+   * 列表顺序必须只由内容决定 —— 谁是当前文档用颜色标出来就够了，不必换位置。
    *
    * 排序放在前端而不是后端，是为了让浏览器桥和 Rust 两套实现不必在
    * 「目录遍历顺序」上强求一致 —— 那是文件系统的脾气，不是产品的语义。
    */
-  function activeFirst(groups: HitGroup[], active: string): HitGroup[] {
-    const sorted = [...groups].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
-    if (!active) return sorted;
-    const head = sorted.filter((g) => samePath(g.path, active));
-    if (head.length === 0) return sorted;
-    return [...head, ...sorted.filter((g) => !samePath(g.path, active))];
+  function sortGroups(groups: HitGroup[]): HitGroup[] {
+    return [...groups].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
   }
 
-  const orderedGroups = $derived(activeFirst(hitGroups, activeTab?.path ?? ''));
+  const orderedGroups = $derived(sortGroups(hitGroups));
 
   /** 已打开文档内的检索：同步完成，给输入即时反馈 */
   function groupsFromTabs(needle: string, list: DocTab[]): { groups: HitGroup[]; total: number } {

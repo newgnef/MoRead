@@ -145,10 +145,26 @@ const groups = await cdp.eval(PROBE_GROUPS);
 const totalHits = groups.reduce((n, g) => n + g.hits.length, 0);
 
 check('返回了跨文件的分组结果', groups.length >= 3, `${groups.length} 个文件 · ${totalHits} 条命中`);
+
+/*
+  当前文档只标颜色、不换位置。
+
+  早先是「当前打开的那篇排最前」，看起来贴心，实际是：点一条结果 → 活动标签
+  变了 → 整张列表重排 → 用户要点的第二条已经换地方了。所以这条断言刻意分成
+  两半：标记必须唯一且正确，但它在列表里的位置必须只由文件名决定。
+*/
+const marked = groups.filter((g) => g.current);
+const sortedByNode = [...groups].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
 check(
-  '当前打开的文档被排到最前并标记',
-  groups[0]?.current === true,
-  `${groups[0]?.name}${groups[0]?.current ? '（当前）' : ''}`,
+  '当前打开的文档被标记出来（仅一处）',
+  marked.length === 1,
+  `标记 ${marked.map((g) => g.name).join(' / ') || '无'}`,
+);
+check(
+  '顺序只按文件名，当前文档没有置顶',
+  JSON.stringify(groups.map((g) => g.name)) === JSON.stringify(sortedByNode.map((g) => g.name))
+    && groups[0]?.current !== true,
+  groups.map((g) => g.name).join(' / '),
 );
 
 const target = groups.find((g) => g.name === TARGET_FILE);

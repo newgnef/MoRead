@@ -613,9 +613,11 @@ moread.exe <span class="v">D:/notes/guide.md</span></div>
       <tr><td style="font-weight:500;color:var(--mr-text-1)">历史上限</td><td>24 条——再多就从「能找回的东西」变成需要检索的档案馆</td></tr>
       <tr><td style="font-weight:500;color:var(--mr-text-1)">搜索栏宽度</td><td><code>min(336px, 34vw)</code>，下限 260；占位时正文收到 <code>min(680, 可用宽度)</code>，绝不横向裁切</td></tr>
       <tr><td style="font-weight:500;color:var(--mr-text-1)">范围切换</td><td>三档分段：当前标签 / 所有标签 / 工作区；没有工作区时第三档置灰</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">结果顺序</td><td>按文件分组，<b>组顺序只按文件名，永不因「谁是当前文档」重排</b>；当前文档只把文件名转 <code>--mr-accent</code> 标出，位置不动</td></tr>
     </tbody>
   </table></div>
   <div class="note"><b>两条判断：</b>① 缺失状态是每次启动探测出的<b>当下事实</b>，不写进存储——文件放回去了，列表不能还灰着。② 搜索放右侧而不是左侧：左侧回答「我的文档在哪」（常驻导航），右侧回答「这段内容在哪」（临时任务，用完即收）。</div>
+  <div class="note"><b>一条硬规则：</b>结果列表的顺序必须与交互无关。曾经做过「当前文档置顶」——点一条命中，活动标签就变了，整张列表跟着重排，用户要点的第二条已经换到别处。<b>列表可以变色，但不能换位。</b></div>
 
   <hr class="hr">
 

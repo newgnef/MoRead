@@ -203,6 +203,23 @@ try {
   check('点未打开文档的命中会把它打开', jumped.active === 'hidden.md' && jumped.tabs === 3,
     `当前 ${jumped.active}，${jumped.tabs} 个标签`);
 
+  /*
+    点完之后结果列表不能重排。
+    这里点的是排在最后的 hidden.md，如果还有「当前文档置顶」那套逻辑，
+    它会瞬间跳到第一位 —— 用户正要点第二条时目标就换地方了。
+  */
+  const afterJump = await cdp.eval(STATE);
+  check('跳转后结果顺序不变（当前文档不置顶）',
+    JSON.stringify(afterJump.groups) === JSON.stringify(wsScope.groups),
+    `${wsScope.groups.join(' / ')} → ${afterJump.groups.join(' / ')}`);
+  check('当前文档改用高亮标出，位置仍在原处',
+    await cdp.eval(`(() => {
+      const cur = document.querySelector('.sp .grp.is-current .grp__name');
+      return cur?.textContent.trim() === 'hidden.md'
+        && [...document.querySelectorAll('.sp .grp__name')].indexOf(cur) === 2;
+    })()`),
+    afterJump.groups.join(' / '));
+
   /* ---------------- 5. 收起 → 正文回宽 ---------------- */
   await cdp.eval(`document.querySelector('.sp__fold').click()`);
   await sleep(400);
