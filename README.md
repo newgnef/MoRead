@@ -4,6 +4,18 @@
 
 ![主界面](outputs/app/M14-侧栏-默认大纲.png)
 
+## 下载
+
+**[→ Releases 下载最新版](https://github.com/newgnef/MoRead/releases/latest)**
+
+| 文件 | 大小 | 说明 |
+|---|---|---|
+| `MoRead_0.1.0_x64-setup.exe` | 2.69 MiB | 安装版，装完双击 `.md` 直接打开 |
+| `MoRead-免安装版.exe` | 5.05 MiB | 单文件直跑，不写注册表、不抢默认程序 |
+
+Windows 10 1803+ / 11，x64。WebView2 系统自带，无需另装运行时。
+也可从源码跑：`cd moread && npm install && npm run preview`。
+
 > **第一次接触这个项目？**
 > 产品是什么 → 本文；**怎么接着开发** → [`AI-HANDOFF.md`](AI-HANDOFF.md)（环境、架构、必须遵守的不变式、测试、下一步）；
 > 这个项目是怎么走过来的 → [`PROJECT-SUMMARY.md`](PROJECT-SUMMARY.md)；
@@ -51,6 +63,7 @@ PROJECT-SUMMARY.md  过程回顾：时间线、关键决策、实测数据
 moread/             工程本体（源码、工具链、开发文档都在这里，细则见 moread/README.md）
 outputs/
   ├─ md-reader-req-v1.md/.html   需求方案
+  ├─ RELEASE-NOTES-v0.1.0.md     发布说明（Release 页正文，含 SHA256）
   ├─ prototype/                  6 屏原型（S1–S6）
   ├─ design-system/              设计规范 v1.3 + tokens.css / tokens.ts
   └─ app/                        各阶段实机截图、测试报告、两个安装包
