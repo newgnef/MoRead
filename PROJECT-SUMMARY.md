@@ -140,7 +140,7 @@
 README.md                     产品说明（GitHub 首页）
 AI-HANDOFF.md                 给接手者：环境 / 架构 / 不变式 / 测试 / 下一步
 PROJECT-SUMMARY.md            本文件：过程与决策回顾
-moread/                       工程本体（含 723 行开发文档 README.md）
+moread/                       工程本体（含 734 行开发文档 README.md）
 outputs/
   ├─ md-reader-req-v1.md/.html  需求方案
   ├─ prototype/                 6 屏原型

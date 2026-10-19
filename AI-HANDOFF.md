@@ -2,7 +2,7 @@
 
 > 这份文件写给**接手的 AI（或人）**：读完它应当能在不改坏既有约定的前提下继续开发。
 > 产品是什么、怎么跑、代码长什么样，看 `README.md`；每处设计决定的**理由**看
-> `moread/README.md`（723 行，是最详细的一份）；视觉规则看
+> `moread/README.md`（734 行，是最详细的一份）；视觉规则看
 > `outputs/design-system/design-spec.md`。
 
 ---
