@@ -189,6 +189,30 @@ npm run preview  # 生产构建预览，端口 1421，性能接近最终形态 �
 安装时由 NSIS 写入 `HKCU\Software\Classes`，卸载时清掉。**免安装版不写注册表**，
 不会抢你的默认程序。
 
+### 安装完成自动翻到结束页
+
+Tauri 的 NSIS 模板里有一行 `!define MUI_FINISHPAGE_NOAUTOCLOSE`，注释写明了理由：
+“安装页上有可用于排查问题的信息，所以不要自动跳”。MUI2 实现这个开关的方式，
+就是在结束页的初始化里跳过 `SetAutoClose true`。结果是装完之后停在
+「已完成」那一页（进度条走满），**还得再点一次「下一步」**才看到“安装程序结束”。
+
+这里的取舍是：这是个阅读器，安装过程没有值得盯着看的信息，而多出来的那一次点击
+会被误读成“装完了吗？好像没动”。所以用 `bundle.windows.nsis.installerHooks`
+注入一个宏把它改回来：
+
+```nsis
+; src-tauri/installer-hooks.nsh
+!macro NSIS_HOOK_POSTINSTALL
+  SetAutoClose true
+!macroend
+```
+
+配置里 `"installerHooks": "./installer-hooks.nsh"`（路径相对 `tauri.conf.json`），
+模板会在 Section 末尾 `!insertmacro NSIS_HOOK_POSTINSTALL`。
+
+> 这个 `.nsh` **必须保持纯 ASCII**。NSIS 可能按系统 ANSI 代码页读被包含的文件，
+> 中文注释在这里换不来任何收益，只换来一次编码赌博。
+
 打开请求有两条完全不同的路径，都必须处理：
 
 | 场景 | 路径 |
