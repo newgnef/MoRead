@@ -10,6 +10,8 @@ moread/src-tauri/gen/
 # 5MB 的 exe 进仓库只会把 clone 拖慢，发布时走 Releases 更合适
 outputs/app/*.exe
 outputs/app/*.msi
+# 资料包是给人下载的，不进版本库
+*.zip
 
 # ---------------- 本机环境 ----------------
 .workbuddy/

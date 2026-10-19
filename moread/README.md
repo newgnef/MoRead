@@ -445,6 +445,7 @@ moread/
 ├─ tools/                         开发期工具（不参与打包）
 │  ├─ dev-fs.ts                   Vite 中间件：把宿主文件系统只读地暴露给浏览器预览
 │  ├─ cdp.mjs                     共享 CDP 客户端（零依赖）
+│  ├─ run-with-browser.mjs        起一个带调试端口的 Edge 再跑脚本（给需要持续会话的那 4 个用）
 │  ├─ e2e-check.mjs               冒烟测试：文件树 / 渲染 / 自动重载 / 滚动锚点
 │  ├─ search-check.mjs            搜索端到端：跨文件跳转 + 精确落点
 │  ├─ search-virtual.mjs          搜索定位的虚拟化路径（深层块）
@@ -492,19 +493,29 @@ Tauri 需要 Rust + MSVC，门槛高、迭代慢。`tools/dev-fs.ts` 提供了�
 
 ### 验证脚本
 
+前四个脚本需要**一条持续的 CDP 会话**（要在同一次会话里反复导航、读 localStorage），
+所以不自己起浏览器；用 `tools/run-with-browser.mjs` 一条命令包住：
+
+```bash
+node tools/run-with-browser.mjs tools/e2e-check.mjs \
+  --url "http://127.0.0.1:1420/?ws=<工作区>" --out <结果目录> -- --doc <被监视的 md>
+# 同理：search-check / search-virtual / tabs-check
+# 它负责起 Edge（--port 指定，默认 9222）、传 --cdp，跑完收掉
+```
+
 ```bash
 # 端到端冒烟：文件树、渲染、外部改写后自动重载、滚动锚点
-node tools/e2e-check.mjs --url http://127.0.0.1:1420/ --doc <被监视的 md 路径> --out <截图目录>
+node tools/run-with-browser.mjs tools/e2e-check.mjs --url http://127.0.0.1:1420/ --doc <被监视的 md 路径> --out <截图目录>
 
 # 搜索端到端：分组结果、点击未打开的文件、精确落点
 #   测试文档里埋了 5 处「报表A…E」，彼此隔得足够远
-node tools/search-check.mjs --url "http://127.0.0.1:1420/?ws=<工作区>" --out <结果目录>
+node tools/run-with-browser.mjs tools/search-check.mjs --url "http://127.0.0.1:1420/?ws=<工作区>" --out <结果目录>
 
 # 搜索定位的虚拟化路径（深层块，两套代码分支完全不同）
-node tools/search-virtual.mjs --url "http://127.0.0.1:1420/?ws=<大文档工作区>" --out <结果目录>
+node tools/run-with-browser.mjs tools/search-virtual.mjs --url "http://127.0.0.1:1420/?ws=<大文档工作区>" --out <结果目录>
 
 # 标签手势：拖拽换位、右键菜单、固定标签挡住 Ctrl+W / 中键 / 关闭全部
-node tools/tabs-check.mjs --url "http://127.0.0.1:1420/?nowatch=1&ws=<工作区>" --out <结果目录>
+node tools/run-with-browser.mjs tools/tabs-check.mjs --url "http://127.0.0.1:1420/?nowatch=1&ws=<工作区>" --out <结果目录>
 
 # 标签溢出：自己起浏览器（端口 9223），跑完自己收掉
 #   断言收缩不越界、⌄ 的出现/消失、菜单条目与视野外标签一致、滚轮横推、活动标签追视野
