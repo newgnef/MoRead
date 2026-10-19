@@ -20,6 +20,9 @@
     /** 正文字号（px）与它的改变入口；面板里的 A− / A+ 直接调 */
     fontSize: number;
     onFontSize: (px: number) => void;
+    /** 右侧搜索栏的开合状态与切换入口 */
+    searchOpen: boolean;
+    onToggleSearch: () => void;
     onSelect: (id: string) => void;
     onClose: (id: string) => void;
     onOpen: () => void;
@@ -33,7 +36,7 @@
   let {
     tabs, activeId, scheme, palette, themeMode,
     onSelect, onClose, onOpen, onPickTheme, onFollowSystem,
-    fontSize, onFontSize,
+    fontSize, onFontSize, searchOpen, onToggleSearch,
     onCloseMany, onTogglePin, onReorder,
   }: Props = $props();
 
@@ -493,6 +496,22 @@
     </div>
 
     <div class="titlebar__spacer"></div>
+
+    <!--
+      搜索入口与外观入口并排：这两个都是"调当前这次阅读"的动作，
+      不该混进左侧导航区。按下时按钮自身有 is-on 底色，收起来也有反馈。
+    -->
+    <button
+      class="icon-btn"
+      class:is-on={searchOpen}
+      type="button"
+      title="搜索 (Ctrl+F)"
+      aria-label="搜索"
+      aria-pressed={searchOpen}
+      onclick={onToggleSearch}
+    >
+      <Icon name="search" size={15} />
+    </button>
 
     <button
       class="icon-btn"

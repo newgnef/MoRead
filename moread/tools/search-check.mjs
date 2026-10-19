@@ -112,26 +112,32 @@ const tree = await cdp.eval(`(() => ({
 }))()`);
 check('工作区文件树已加载', tree.files > 0, `${tree.files} 篇文档`);
 
-/* 2. 切到搜索页签 */
-const switched = await cdp.eval(`(() => {
-  const b = [...document.querySelectorAll('.sidebar__tab')].find((x) => x.textContent.trim() === '搜索');
-  if (!b) return false;
-  b.click();
+/* 2. 打开右侧搜索栏，并切到「工作区」—— 本用例要搜的正是还没打开的那篇 */
+const switched = await cdp.eval(`(async () => {
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+  const btn = document.querySelector('.icon-btn[aria-label="搜索"]');
+  if (!btn) return false;
+  btn.click();
+  await wait(320);
+  const ws = [...document.querySelectorAll('.sp__scope')].find((b) => b.textContent.trim() === '工作区');
+  if (!ws) return false;
+  ws.click();
+  await wait(320);
   return true;
 })()`);
-check('切到搜索页签', switched);
+check('打开右侧搜索栏并切到「工作区」', switched);
 await sleep(250);
 
 /* 3. 输入关键词 */
 await cdp.eval(`(() => {
-  const input = document.querySelector('.search-input input');
+  const input = document.querySelector('.sp__input input');
   const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
   setter.call(input, ${JSON.stringify(KEYWORD)});
   input.dispatchEvent(new Event('input', { bubbles: true }));
   return input.value;
 })()`);
 
-await waitFor(cdp, `document.querySelectorAll('.grp').length > 0`, {
+await waitFor(cdp, `document.querySelectorAll('.sp .grp').length > 0`, {
   label: '搜索结果出现', timeoutMs: 10000, intervalMs: 150,
 });
 

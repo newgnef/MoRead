@@ -175,6 +175,20 @@ pub struct TreeNode {
 ///
 /// 返回扁平数组（每项自带 depth），前端直接顺序渲染即可 ——
 /// 省掉一层递归结构，也让「展开/折叠」纯粹变成过滤。
+/// 路径是否是一个存在的**文件**。
+///
+/// 历史记录在启动时要一次性校验二十几条旧路径。若用 `read_text_file` 去试，
+/// 等于把每篇文档都读进内存（几百 KB × 24），只为回答一个是/否；
+/// 而且 GBK 文件、大文件会让这件事更贵。这里只做一次 stat。
+///
+/// 目录返回 false：历史列表里可以点的都是文档，目录不该被当成"存在"。
+/// 权限不足等错误也一律当不存在 —— 打不开的路径对用户和不存在没区别。
+#[tauri::command]
+fn path_exists(path: String) -> bool {
+    let p = path.trim();
+    !p.is_empty() && std::path::Path::new(p).is_file()
+}
+
 #[tauri::command]
 async fn list_dir(root: String, max_depth: Option<u32>) -> Result<Vec<TreeNode>, String> {
     let cap = max_depth.unwrap_or(12).min(24);
@@ -855,6 +869,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             host_info,
             read_text_file,
+            path_exists,
             list_dir,
             search_workspace,
             watch_workspace,
@@ -1074,6 +1089,22 @@ mod tests {
 
         let missing = d.join("missing.md");
         assert!(tauri::async_runtime::block_on(read_text_file(s(&missing))).is_err());
+    }
+
+    /* ---------------------------- path_exists -------------------------- */
+
+    /// 历史记录的可点状态全靠它判断，判错的后果是：
+    /// 真文件被画成灰的（点不动）、或已删除的文件看着能点（点了报错）。
+    #[test]
+    fn path_exists_tells_file_from_gone_and_dir() {
+        let d = workdir("path-exists");
+        let f = write(&d, "keep.md", b"# hi");
+
+        assert!(path_exists(s(&f)), "存在的文件应为 true");
+        assert!(!path_exists(s(&d)), "目录不算文件");
+        assert!(!path_exists(s(&d.join("gone.md"))), "不存在的路径应为 false");
+        assert!(!path_exists(String::new()), "空路径应为 false");
+        assert!(!path_exists("   ".into()), "纯空白应为 false");
     }
 
     /* ------------------------- search_workspace ------------------------ */

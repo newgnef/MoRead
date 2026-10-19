@@ -22,6 +22,9 @@
       '<path d="M14.5 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
     search:
       '<circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.9"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+    // 历史：钟面 + 时针分针。不用"逆时针箭头"，14px 下那个弧线会糊成一团
+    clock:
+      '<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.9"/><path d="M12 7.6V12l3.1 1.9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
     close:
       '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
     plus: '<path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',

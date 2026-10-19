@@ -3,6 +3,7 @@
   import TitleBar from './lib/components/TitleBar.svelte';
   import Sidebar from './lib/components/Sidebar.svelte';
   import SidebarRail from './lib/components/SidebarRail.svelte';
+  import SearchPanel from './lib/components/SearchPanel.svelte';
   import Article from './lib/components/Article.svelte';
   import EmptyState from './lib/components/EmptyState.svelte';
   import FolderPicker from './lib/components/FolderPicker.svelte';
@@ -13,14 +14,14 @@
     type ResolvedTheme, type ThemeMode, type ThemePalette,
   } from './lib/tokens';
   import {
-    relativeTime, samePath,
-    type DocTab, type Hit, type HitGroup, type RecentItem, type ScrollAnchor,
+    normalizePath, relativeTime, samePath,
+    type DocTab, type Hit, type HitGroup, type HistoryItem, type RecentItem, type ScrollAnchor,
     type SearchInfo, type SearchScope, type SearchState,
     type SidebarMode, type TabCloseMode, type Toast, type TreeNode, type TreeState,
   } from './lib/types';
   import {
     detectBackend, getHostInfo, isTauri, listWorkspace,
-    onOpenFileRequested, pickFolder, pickMarkdownFile, readDoc,
+    onOpenFileRequested, pathExists, pickFolder, pickMarkdownFile, readDoc,
     searchWorkspace, setWindowTitle, takePendingOpen, watchWorkspace,
     type BackendKind, type FsEvent, type HostInfo, type OpenedFile, type SearchResult,
   } from './lib/platform';
@@ -36,7 +37,16 @@
     wss: 'moread.workspaces',
     recents: 'moread.recents',
     sidebarW: 'moread.sidebar-w',
+    searchScope: 'moread.search-scope',
   } as const;
+
+  /**
+   * 历史保留条数。
+   *
+   * 24 条差不多是一周的阅读量。再往上加，这个列表就从"回过味来能找回的东西"
+   * 变成一份需要自己检索的档案馆 —— 而检索已经由右侧搜索栏负责了。
+   */
+  const RECENT_MAX = 24;
 
   const SAMPLE_PATH = 'moread://sample/guide.md';
 
@@ -62,9 +72,28 @@
   let activeId = $state('');
   let recents = $state<RecentItem[]>([]);
 
+  /**
+   * 历史里"磁盘上已经没有了"的路径（normalize 过的）。
+   *
+   * 刻意不写回 localStorage：这是每次启动重新探测出来的**当下事实**，
+   * 存下来就会变成一份会过期的判断 —— 用户把文件放回去，列表还灰着。
+   */
+  let historyMissing = $state<Record<string, boolean>>({});
+  /** 探测代次：连点刷新 / 换工作区时，旧的一批结果不许回写 */
+  let historySeq = 0;
+
   // 界面
   let sidebarMode = $state<SidebarMode>('outline');
   let sidebarCollapsed = $state(false);
+  /** 右侧搜索栏是否展开 */
+  let searchOpen = $state(false);
+  /**
+   * 搜索范围。默认「所有标签」—— 打开搜索栏通常是在手头这几篇里找东西；
+   * 搜整个目录是另一个动作，不该占默认位置。
+   */
+  let searchScope = $state<SearchScope>('tabs');
+  /** 自增即让搜索框重新聚焦（Ctrl+F 连按、从面板外唤起时都走这条） */
+  let searchFocusToken = $state(0);
   let query = $state('');
   let themeMode = $state<ThemeMode>('light');
   let themePalette = $state<ThemePalette>('paper');
@@ -205,10 +234,69 @@
   let hitGroups = $state<HitGroup[]>([]);
   let searchInfo = $state<SearchInfo | null>(null);
 
-  /** 有工作区就搜磁盘（含未打开的文档），否则退化为「搜已打开的标签」 */
-  const searchScope = $derived<SearchScope>(
-    workspacePath && backend !== 'none' ? 'workspace' : 'tabs',
+  /**
+   * 实际生效的范围：没有工作区时「工作区」这一档无从谈起，退回标签搜索。
+   * UI 上那一档会置灰，这里再兜一层 —— 否则带着上次的状态进来会搜出一片空。
+   */
+  const effectiveScope = $derived<SearchScope>(
+    searchScope === 'workspace' && (!workspacePath || backend === 'none')
+      ? 'tabs'
+      : searchScope,
   );
+
+  /* ------------------------------------------------------------------
+     历史
+     ------------------------------------------------------------------ */
+
+  /**
+   * 侧栏历史列表。只保留文件（目录没有"重新打开"这回事），
+   * 相对时间按 timeMs 现算 —— 存下来的 "3 分钟前" 过一夜就是错的。
+   */
+  const history = $derived<HistoryItem[]>(
+    recents
+      .filter((r) => r.kind === 'file')
+      .map((r) => ({
+        name: r.name,
+        path: r.path,
+        time: r.timeMs ? relativeTime(r.timeMs) : r.time,
+        missing: !!historyMissing[normalizePath(r.path)],
+      })),
+  );
+
+  /**
+   * 校验历史条目还在不在。
+   *
+   * 并发探测而不是串行：二十几条路径彼此没有依赖，串行只会让列表先灰一片再逐条变回来。
+   * 无文件系统能力（静态托管）时一律不标灰 —— "无法确认"不等于"已经不存在"，
+   * 这时候点了会走打开失败的分支给出提示，比错误地涂灰要诚实。
+   */
+  async function verifyHistory() {
+    const seq = ++historySeq;
+    const files = recents.filter((r) => r.kind === 'file');
+    if (files.length === 0) { historyMissing = {}; return; }
+    if (backend === 'none') { historyMissing = {}; return; }
+
+    const results = await Promise.all(
+      files.map(async (f) => [normalizePath(f.path), await pathExists(f.path)] as const),
+    );
+    if (seq !== historySeq) return;
+
+    const next: Record<string, boolean> = {};
+    for (const [key, ok] of results) if (!ok) next[key] = true;
+    historyMissing = next;
+  }
+
+  async function openHistory(item: HistoryItem) {
+    if (item.missing) return;
+    // 列表是启动时校验的，中间可能已经被删。点之前再确认一次：
+    // 一次 stat 换掉一个难看的错误弹窗，值得
+    if (!(await pathExists(item.path))) {
+      historyMissing = { ...historyMissing, [normalizePath(item.path)]: true };
+      toastShow('这个文件已经不存在了', 'warn', 2600);
+      return;
+    }
+    await openExternalFile(item.path);
+  }
 
   /** 递增序号：响应回来时若已不是最新一次，直接丢弃，避免旧结果覆盖新结果 */
   let searchSeq = 0;
@@ -231,11 +319,11 @@
   const orderedGroups = $derived(activeFirst(hitGroups, activeTab?.path ?? ''));
 
   /** 已打开文档内的检索：同步完成，给输入即时反馈 */
-  function groupsFromTabs(needle: string): { groups: HitGroup[]; total: number } {
+  function groupsFromTabs(needle: string, list: DocTab[]): { groups: HitGroup[]; total: number } {
     const groups: HitGroup[] = [];
     let total = 0;
 
-    for (const tab of tabs) {
+    for (const tab of list) {
       const { matches, count } = searchInText(tab.source, needle, { maxHits: MAX_HITS_PER_FILE });
       if (matches.length === 0) continue;
 
@@ -289,12 +377,14 @@
       return;
     }
 
-    if (scope === 'tabs') {
-      const { groups, total } = groupsFromTabs(needle);
+    if (scope === 'tabs' || scope === 'active') {
+      // 「当前标签」只是把候选集缩到一篇，其余逻辑与「所有标签」完全同一条路
+      const list = scope === 'active' ? (activeTab ? [activeTab] : []) : tabs;
+      const { groups, total } = groupsFromTabs(needle, list);
       hitGroups = groups;
       searchInfo = {
         totalMatches: total,
-        scannedFiles: tabs.length,
+        scannedFiles: list.length,
         truncated: false,
         elapsedMs: 0,
       };
@@ -330,14 +420,16 @@
     }, SEARCH_DEBOUNCE);
   }
 
-  // query 或扫描范围一变就重跑搜索
+  // query 或搜索范围一变就重跑搜索
   $effect(() => {
     const needle = query.trim();
-    const scope = searchScope;
-    // 只有「标签内检索」需要随标签集合变化重跑；工作区检索与内存里的标签无关
+    const scope = effectiveScope;
+    // 内存检索要跟着标签集合 / 当前文档变；工作区检索与标签无关
     if (scope === 'tabs') void tabs.length;
+    if (scope === 'active') void activeTab?.id;
+    void searchOpen; // 收起时不必搜，展开后立刻给结果
     const root = workspacePath;
-    scheduleSearch(needle, scope, root);
+    scheduleSearch(searchOpen ? needle : '', scope, root);
   });
 
   // 窗口标题跟随当前文档。自绘标题栏不显示它，但任务栏悬停 / Alt+Tab 读的是这个
@@ -370,6 +462,9 @@
       // 上一次拖到的宽度。存的是数值，非法值（被手改过 / 旧版本残留）直接忽略
       const w = Number(localStorage.getItem(LS.sidebarW));
       if (Number.isFinite(w) && w > 0) sidebarW = clampSidebarW(w);
+      // 搜索范围也记住：习惯搜整个工作区的人，不该每次打开都被重置成"所有标签"
+      const sc = localStorage.getItem(LS.searchScope);
+      if (sc === 'active' || sc === 'tabs' || sc === 'workspace') searchScope = sc;
     } catch {
       workspacePath = '';
       recentWorkspaces = [];
@@ -379,7 +474,7 @@
 
   function persistRecents() {
     try {
-      localStorage.setItem(LS.recents, JSON.stringify(recents.slice(0, 8)));
+      localStorage.setItem(LS.recents, JSON.stringify(recents.slice(0, RECENT_MAX)));
     } catch { /* 隐私模式等场景静默忽略 */ }
   }
 
@@ -392,8 +487,15 @@
   function pushRecent(name: string, path: string, kind: 'file' | 'dir') {
     const timeMs = Date.now();
     const item: RecentItem = { name, path, kind, timeMs, time: relativeTime(timeMs) };
-    recents = [item, ...recents.filter((r) => !(r.kind === kind && samePath(r.path, path)))].slice(0, 8);
+    recents = [item, ...recents.filter((r) => !(r.kind === kind && samePath(r.path, path)))].slice(0, RECENT_MAX);
     persistRecents();
+    // 新打开的文件一定要可点，先把它从"缺失"里摘掉 —— 否则重开一个刚被标记过的路径
+    // 会先灰一帧，等下一次全量校验才恢复
+    if (kind === 'file' && historyMissing[normalizePath(path)]) {
+      const next = { ...historyMissing };
+      delete next[normalizePath(path)];
+      historyMissing = next;
+    }
   }
 
   function pushRecentWorkspace(root: string) {
@@ -473,6 +575,10 @@
     void (async () => {
       backend = await detectBackend();
       host = getHostInfo();
+
+      // 后端确定后才能问"这个路径还在不在"：早了 back-end 还是 none，
+      // 结果会是整列表全灰
+      void verifyHistory();
 
       // ?ws=<路径> 允许直接指定工作区：调试与自动化截图都靠它，优先级高于上次会话
       const wsParam = new URLSearchParams(location.search).get('ws');
@@ -1099,10 +1205,12 @@
     }
     if (mod && e.key.toLowerCase() === 'f') {
       e.preventDefault();
-      sidebarCollapsed = false;
-      sidebarMode = 'search';
+      // 搜索搬到右侧栏之后，Ctrl+F 不再改动左侧栏：两者互不干扰
+      searchOpen = true;
+      searchFocusToken++;
       return;
     }
+    if (e.key === 'Escape' && searchOpen) { e.preventDefault(); searchOpen = false; return; }
     if (mod && e.key === 'Tab') { e.preventDefault(); cycleTab(e.shiftKey ? -1 : 1); return; }
     if (e.key === 'Escape' && inField) {
       (e.target as HTMLInputElement).blur();
@@ -1139,6 +1247,8 @@
     onFollowSystem={followSystem}
     {fontSize}
     onFontSize={changeFont}
+    {searchOpen}
+    onToggleSearch={() => { searchOpen = !searchOpen; if (searchOpen) searchFocusToken++; }}
     onSelect={(id) => { activeId = id; }}
     onClose={closeTab}
     onOpen={openFileDialog}
@@ -1164,7 +1274,11 @@
       {:else}
       <Sidebar
         mode={sidebarMode}
-        onMode={(m) => { sidebarMode = m; }}
+        onMode={(m) => {
+          sidebarMode = m;
+          // 切到历史就重新校验一次：文件可能刚被删掉，也可能刚被放回去
+          if (m === 'history') void verifyHistory();
+        }}
         onCollapse={() => { sidebarCollapsed = true; }}
         workspace={workspaceName}
         {workspacePath}
@@ -1178,13 +1292,9 @@
         outline={rendered.headings}
         currentId={currentHeadingId}
         onJump={jumpToHeading}
-        {query}
-        onQuery={(q) => { query = q; }}
-        groups={orderedGroups}
-        scope={searchScope}
-        {searchState}
-        {searchInfo}
-        onHit={goToHit}
+        {history}
+        onOpenHistory={openHistory}
+        onClearHistory={() => { recents = []; historyMissing = {}; persistRecents(); }}
       />
 
       <!--
@@ -1262,6 +1372,26 @@
         />
       {/if}
     </main>
+
+    {#if searchOpen}
+      <SearchPanel
+        {query}
+        onQuery={(q) => { query = q; }}
+        scope={effectiveScope}
+        onScope={(s) => {
+          searchScope = s;
+          try { localStorage.setItem(LS.searchScope, s); } catch { /* 忽略 */ }
+        }}
+        hasWorkspace={!!workspacePath && backend !== 'none'}
+        groups={orderedGroups}
+        status={searchState}
+        info={searchInfo}
+        activePath={activeTab?.path ?? ''}
+        focusToken={searchFocusToken}
+        onHit={goToHit}
+        onClose={() => { searchOpen = false; }}
+      />
+    {/if}
   </div>
 </div>
 

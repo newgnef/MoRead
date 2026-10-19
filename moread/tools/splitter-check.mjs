@@ -246,8 +246,8 @@ try {
   check('折叠后侧栏消失、拖拽条一起隐藏', !folded.hasSidebar && !folded.hasGutter);
   check('折叠后出现 44px 图标栏（不是彻底消失）', folded.hasRail && folded.railW === 44,
     `rail ${folded.railW}px`);
-  check('图标栏里留着 文件/大纲/搜索 三个入口',
-    folded.modes.join(',') === 'files,outline,search', folded.modes.join(' / '));
+  check('图标栏里留着 文件/大纲/历史 三个入口',
+    folded.modes.join(',') === 'files,outline,history', folded.modes.join(' / '));
   check('图标栏底部有展开按钮', folded.hasExpand);
   check('折叠释放的宽度全给正文',
     Math.abs((folded.contentW - contentBefore) - (330 - 44)) <= 2,
@@ -257,7 +257,7 @@ try {
   // 点图标栏里的「搜索」：展开并切到该模式（起始模式是 outline，切得过去才说明真的带上了模式）
   const OPEN_BY_RAIL = `(async () => {
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
-    document.querySelector('.rail [data-mode="search"]').click();
+    document.querySelector('.rail [data-mode="history"]').click();
     await wait(350);
     const sb = document.querySelector('.sidebar');
     return {
@@ -268,7 +268,7 @@ try {
     };
   })()`;
   const byRail = await cdp.eval(OPEN_BY_RAIL);
-  check('点图标栏的「搜索」→ 展开并切到搜索', !byRail.hasRail && byRail.activeTab === '搜索',
+  check('点图标栏的「历史」→ 展开并切到历史', !byRail.hasRail && byRail.activeTab === '历史',
     `侧栏 ${byRail.sidebarW}px，当前 ${byRail.activeTab}`);
   check('展开后宽度还是折叠前的（没被重置成 240）',
     Math.abs(byRail.sidebarW - 330) <= 1.5, `${byRail.sidebarW}px`);

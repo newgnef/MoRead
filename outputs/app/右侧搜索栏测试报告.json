@@ -1,0 +1,117 @@
+{
+  "width": 1280,
+  "total": 22,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "打开两篇（第三篇 hidden.md 留在磁盘上不打开）",
+      "ok": true,
+      "detail": "[\"doc-a.md\",\"doc-b.md\"]"
+    },
+    {
+      "name": "默认不展开搜索栏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "默认正文是 680 的标准列宽",
+      "ok": true,
+      "detail": "680px"
+    },
+    {
+      "name": "点放大镜出现右侧栏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "右侧栏宽度在 260–340 之间（按 34vw 收）",
+      "ok": true,
+      "detail": "336px"
+    },
+    {
+      "name": "右侧栏占位后正文自动收窄，不再被裁",
+      "ok": true,
+      "detail": "680 → 656px"
+    },
+    {
+      "name": "打开后输入框自动聚焦",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "默认范围是「所有标签」",
+      "ok": true,
+      "detail": "所有标签"
+    },
+    {
+      "name": "三档范围都在，工作区可选",
+      "ok": true,
+      "detail": "[{\"label\":\"当前标签\",\"disabled\":false,\"active\":false},{\"label\":\"所有标签\",\"disabled\":false,\"active\":true},{\"label\":\"工作区\",\"disabled\":false,\"active\":false}]"
+    },
+    {
+      "name": "「所有标签」只在已打开的两篇里命中",
+      "ok": true,
+      "detail": "doc-b.md / doc-a.md · 3 处"
+    },
+    {
+      "name": "「当前标签」只出当前这一篇",
+      "ok": true,
+      "detail": "doc-b.md · 当前 doc-b.md"
+    },
+    {
+      "name": "「工作区」会把没打开的 hidden.md 也搜出来",
+      "ok": true,
+      "detail": "doc-b.md / doc-a.md / hidden.md · 4 处命中 · 3 个文件 （扫描 3 篇）"
+    },
+    {
+      "name": "工作区范围的状态行给出扫描篇数",
+      "ok": true,
+      "detail": "4 处命中 · 3 个文件 （扫描 3 篇）"
+    },
+    {
+      "name": "点未打开文档的命中会把它打开",
+      "ok": true,
+      "detail": "当前 hidden.md，3 个标签"
+    },
+    {
+      "name": "收起按钮能关掉右侧栏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "收起后正文恢复到标准列宽",
+      "ok": true,
+      "detail": "680px"
+    },
+    {
+      "name": "Ctrl+F 打开右侧栏并聚焦输入框",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "第一次 Esc 只清空关键词，不关面板",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "关键词已空时再按 Esc 关掉搜索栏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "刷新后仍记得上次选的范围",
+      "ok": true,
+      "detail": "工作区"
+    },
+    {
+      "name": "无工作区时「工作区」这一档置灰",
+      "ok": true,
+      "detail": "[{\"label\":\"当前标签\",\"disabled\":false,\"active\":false},{\"label\":\"所有标签\",\"disabled\":false,\"active\":true},{\"label\":\"工作区\",\"disabled\":true,\"active\":false}]"
+    },
+    {
+      "name": "范围自动落到标签搜索",
+      "ok": true,
+      "detail": "所有标签"
+    }
+  ]
+}

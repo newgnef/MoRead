@@ -104,6 +104,7 @@
   --mr-ctrl-h:        30px;
   --mr-input-h:       32px;
   --mr-reading-w:     680px;  /* 阅读列宽，可调 600 – 1400 */
+  --mr-search-w:      336px;  /* 右侧搜索栏；窗口窄时按 34vw 收 */
   --mr-settings-w:    820px;
   --mr-empty-panel-w: 560px;
 
@@ -309,7 +310,12 @@ button { cursor: pointer; border: none; background: none; }
  * 且所有下游样式（p / h2 / code / table / KaTeX 的 em）自动跟着走，无需逐条改。
  */
 .mr-article {
-  width: var(--mr-reading-w);
+  /*
+    阅读列宽取 680 与容器宽度的较小值。
+    右侧搜索栏展开后可用宽度会掉到 500 上下，这时若仍硬撑 680，
+    正文会被裁掉右半边 —— 缩到能放下整行，比让人左右拖滚动条好。
+  */
+  width: min(var(--mr-reading-w), 100%);
   margin: 0 auto;
   color: var(--mr-text-2);
   font-family: var(--mr-font-sans);

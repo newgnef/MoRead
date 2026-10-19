@@ -20,7 +20,7 @@
   const ITEMS: { id: SidebarMode; icon: string; label: string }[] = [
     { id: 'files', icon: 'folder', label: '文件' },
     { id: 'outline', icon: 'apps', label: '大纲' },
-    { id: 'search', icon: 'search', label: '搜索' },
+    { id: 'history', icon: 'clock', label: '历史' },
   ];
 
   function onKey(e: KeyboardEvent, m: SidebarMode) {

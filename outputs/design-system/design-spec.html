@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MoRead 设计规范 v1.2</title>
+<title>MoRead 设计规范 v1.3</title>
 <style>
 /* ============================================================
    本页自带 MoRead 令牌 —— 规范页本身就是令牌的活体演示
@@ -228,7 +228,7 @@ footer{border-top:1px solid var(--mr-border);margin-top:60px;padding:22px 0;font
 
 <div class="topbar">
   <div class="topbar__mark"></div>
-  <div class="topbar__title">MoRead 设计规范 · v1.2</div>
+  <div class="topbar__title">MoRead 设计规范 · v1.3</div>
   <div class="topbar__spacer"></div>
   <div class="seg" role="group" aria-label="主题切换">
     <button type="button" data-theme-btn="light" aria-pressed="true">浅色</button>
@@ -254,6 +254,7 @@ footer{border-top:1px solid var(--mr-border);margin-top:60px;padding:22px 0;font
     <a href="#comp">5 · 组件规范</a>
     <a href="#comp-md" class="sub">Markdown 渲染件</a>
     <a href="#comp-state" class="sub">三态规范</a>
+    <a href="#comp-history" class="sub">历史与搜索栏</a>
     <a href="#a11y">6 · 无障碍</a>
     <a href="#dont">7 · 禁止项</a>
   </nav>
@@ -472,6 +473,7 @@ footer{border-top:1px solid var(--mr-border);margin-top:60px;padding:22px 0;font
       <tr><td><code>--mr-ctrl-h</code></td><td>30px</td><td>分段控件、步进器</td></tr>
       <tr><td><code>--mr-input-h</code></td><td>32px</td><td>搜索框</td></tr>
       <tr><td><code>--mr-reading-w</code></td><td>680px</td><td>可调 600 – 1400px</td></tr>
+      <tr><td><code>--mr-search-w</code></td><td>336px</td><td>右侧搜索栏；窄窗口按 <code>34vw</code> 收，下限 260</td></tr>
       <tr><td><code>--mr-settings-w</code></td><td>820px</td><td>设置面板宽度</td></tr>
       <tr><td><code>--mr-empty-panel-w</code></td><td>560px</td><td>空态最近列表宽度</td></tr>
     </tbody>
@@ -601,6 +603,20 @@ moread.exe <span class="v">D:/notes/guide.md</span></div>
   </div>
   <div class="note"><b>硬要求：</b>任何数据面都必须实现这四态——加载 / 空 / 错误 / 成功。禁止静默失败，禁止留白让人猜。</div>
 
+  <h3 id="comp-history">5.8 历史行与右侧搜索栏</h3>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:150px">对象</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">历史行结构</td><td>文档图标 · 文件名 12px/500 · 所在目录 10px mono（只取最后一级）· 相对时间 10px mono</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">当前项</td><td>文件名转 <code>--mr-accent</code>，与激活标签同一语义</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">缺失项</td><td>整行降到 <code>--mr-text-6</code>、<code>disabled</code>、行尾挂「已不存在」细边标签，<b>不给任何 hover 反馈</b></td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">历史上限</td><td>24 条——再多就从「能找回的东西」变成需要检索的档案馆</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">搜索栏宽度</td><td><code>min(336px, 34vw)</code>，下限 260；占位时正文收到 <code>min(680, 可用宽度)</code>，绝不横向裁切</td></tr>
+      <tr><td style="font-weight:500;color:var(--mr-text-1)">范围切换</td><td>三档分段：当前标签 / 所有标签 / 工作区；没有工作区时第三档置灰</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b>两条判断：</b>① 缺失状态是每次启动探测出的<b>当下事实</b>，不写进存储——文件放回去了，列表不能还灰着。② 搜索放右侧而不是左侧：左侧回答「我的文档在哪」（常驻导航），右侧回答「这段内容在哪」（临时任务，用完即收）。</div>
+
   <hr class="hr">
 
   <!-- ============ 6 无障碍 ============ -->
@@ -635,7 +651,7 @@ moread.exe <span class="v">D:/notes/guide.md</span></div>
     <div class="dont__i"><div class="dont__t">✕ 装饰性分隔线</div><div class="dont__d">线必须有功能含义（分组 / 边界），不能只是为了好看</div></div>
   </div>
 
-  <footer>MoRead 设计规范 v1.2 · 2026-10-18 · 配套文件：tokens.css · tokens.ts · 原型 6 屏</footer>
+  <footer>MoRead 设计规范 v1.3 · 2026-10-19 · 配套文件：tokens.css · tokens.ts · 原型 6 屏</footer>
 </main>
 </div>
 

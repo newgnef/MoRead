@@ -193,6 +193,38 @@ export async function readDoc(path: string): Promise<OpenedFile> {
 }
 
 /* ------------------------------------------------------------------ */
+/* 存在性探测                                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * 这个路径现在还是一个可读的文档吗？
+ *
+ * 历史记录要靠它决定"灰色不可点"。**不要用 readDoc 去试**：
+ * 那是把整篇文档读进内存再丢掉，二十几条记录就要读几 MB。
+ * 两套后端的契约一致：只认文件，目录 / 权限不足 / 路径拼错一律 false。
+ *
+ * 无可用的文件系统时返回 false —— 此时历史本来也点不开。
+ */
+export async function pathExists(path: string): Promise<boolean> {
+  const p = path.trim();
+  if (!p) return false;
+  try {
+    if (backend === 'tauri') {
+      const { invoke } = await import('@tauri-apps/api/core');
+      return await invoke<boolean>('path_exists', { path: p });
+    }
+    if (backend === 'http') {
+      const r = await fetch(`/__fs/exists?path=${encodeURIComponent(p)}`);
+      if (!r.ok) return false;
+      return Boolean((await r.json() as { exists?: boolean }).exists);
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+/* ------------------------------------------------------------------ */
 /* 列目录                                                              */
 /* ------------------------------------------------------------------ */
 

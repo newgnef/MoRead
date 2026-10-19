@@ -13,6 +13,7 @@
  *   GET /__fs/ping                        → { ok, cwd, home, drives }
  *   GET /__fs/list?root=<abs>&depth=<n>   → TreeNode[]（扁平，含 depth）
  *   GET /__fs/read?path=<abs>             → { content, size, mtime, encoding }
+ *   GET /__fs/exists?path=<abs>           → { exists: boolean }（只认文件）
  *   GET /__fs/watch?root=<abs>            → SSE，推送 { kind, path }
  *   GET /__fs/search?root=<abs>&q=&limit= → SearchResult（按文件分组的命中）
  *
@@ -438,6 +439,23 @@ export function devFsPlugin(): Plugin {
             return sendJson(res, 400, { error: '目标是目录，不是文件' });
           }
           return sendJson(res, 200, { path: abs, ...readText(abs) });
+        }
+
+        /* ---------------- 路径存在性 ---------------- */
+        /*
+          与 Rust 侧 `path_exists` 同一份契约：只回答"是不是一个存在的文件"。
+          目录、权限不足、路径拼错一律 false —— 历史列表里能被点开的只有文档。
+        */
+        case '/__fs/exists': {
+          const target = q.get('path');
+          if (!target) return sendJson(res, 400, { error: '缺少 path 参数' });
+          let exists = false;
+          try {
+            exists = fs.statSync(path.resolve(target)).isFile();
+          } catch {
+            exists = false;
+          }
+          return sendJson(res, 200, { exists });
         }
 
         /* ---------------- 全文搜索 ---------------- */

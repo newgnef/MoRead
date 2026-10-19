@@ -73,7 +73,7 @@ export interface HitGroup {
   hits: Hit[];
 }
 
-export type SidebarMode = 'files' | 'outline' | 'search';
+export type SidebarMode = 'files' | 'outline' | 'history';
 
 /**
  * 批量关闭的口径。锚点是右键点中的那个标签，其余按它的相对位置算。
@@ -92,14 +92,36 @@ export interface SearchInfo {
   elapsedMs: number;
 }
 
-/** 搜索范围：工作区（磁盘）还是已打开的标签 */
-export type SearchScope = 'workspace' | 'tabs';
+/**
+ * 搜索范围：
+ * - `active`    只搜当前标签页（读到哪篇就在哪篇里找）
+ * - `tabs`      所有已打开的标签页
+ * - `workspace` 整个工作区（含没打开的文档）
+ */
+export type SearchScope = 'active' | 'tabs' | 'workspace';
 
 export interface RecentItem {
   name: string;
   path: string;
   time: string;
   kind: 'file' | 'dir';
+  /** 时间戳，用于排序与重算相对时间；旧记录可能没有 */
+  timeMs?: number;
+}
+
+/**
+ * 历史列表里的一行。
+ *
+ * 与 `RecentItem` 分开，是因为这里多了 `missing` —— 它不是一个存储字段，
+ * 而是每次启动时探测出来的**当下事实**。混进 RecentItem 会让 localStorage
+ * 里存着一份会过期的"文件还在"的判断。
+ */
+export interface HistoryItem {
+  name: string;
+  path: string;
+  time: string;
+  /** 磁盘上已经找不到这个文件 */
+  missing: boolean;
 }
 
 /** 工作区加载状态机 */

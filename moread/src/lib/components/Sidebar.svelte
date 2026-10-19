@@ -3,11 +3,7 @@
   import type { Heading } from '../markdown';
   import {
     normalizePath,
-    type Hit,
-    type HitGroup,
-    type SearchInfo,
-    type SearchScope,
-    type SearchState,
+    type HistoryItem,
     type SidebarMode,
     type TreeNode,
     type TreeState,
@@ -30,14 +26,14 @@
     outline: Heading[];
     currentId: string;
     onJump: (id: string) => void;
-    query: string;
-    onQuery: (q: string) => void;
-    /** 搜索结果，已按文件聚合 */
-    groups: HitGroup[];
-    scope: SearchScope;
-    searchState: SearchState;
-    searchInfo: SearchInfo | null;
-    onHit: (hit: Hit) => void;
+    /**
+     * 最近打开过的文档，已按时间倒序。
+     * `missing` 表示磁盘上已经没有这个文件了 —— 那一行画灰且不可点，
+     * 否则点下去只会弹一个"无法打开"的错误。
+     */
+    history: HistoryItem[];
+    onOpenHistory: (item: HistoryItem) => void;
+    onClearHistory: () => void;
     /** 收起成左侧图标栏 */
     onCollapse: () => void;
   }
@@ -45,21 +41,18 @@
   let {
     mode, onMode, workspace, workspacePath, tree, treeState, treeError,
     activePath, onOpenPath, onRefresh, onOpenFolder,
-    outline, currentId, onJump, query, onQuery,
-    groups, scope, searchState, searchInfo, onHit,
+    outline, currentId, onJump,
+    history, onOpenHistory, onClearHistory,
     onCollapse,
   }: Props = $props();
 
   /** 目录折叠状态：默认全部展开，只记「被折叠的」 */
   let collapsed = $state<Record<string, boolean>>({});
-  /** 搜索结果里被折叠的文件组，同样只记「被折叠的」 */
-  let collapsedGroups = $state<Record<string, boolean>>({});
-  let searchInput = $state<HTMLInputElement | null>(null);
 
   const MODES: { id: SidebarMode; label: string }[] = [
     { id: 'files', label: '文件' },
     { id: 'outline', label: '大纲' },
-    { id: 'search', label: '搜索' },
+    { id: 'history', label: '历史' },
   ];
 
   function toggleDir(path: string) {
@@ -71,8 +64,17 @@
     return !!collapsed[normalizePath(path)];
   }
 
-  function toggleGroup(key: string) {
-    collapsedGroups = { ...collapsedGroups, [key]: !collapsedGroups[key] };
+  /**
+   * 历史行里显示的父目录：只取**最后一级**。
+   *
+   * 240px 宽的侧栏里，"temp/moread-ws-history" 这种两级路径会被截成
+   * "temp/moread-ws-histo…"，既占地方又没多给信息 —— 能区分同名文件的
+   * 通常就是最后那一级。完整路径在 title 里，需要时可以悬停看。
+   */
+  function parentOf(p: string): string {
+    const parts = normalizePath(p).split('/').filter(Boolean);
+    if (parts.length <= 1) return '';
+    return parts[parts.length - 2];
   }
 
   /** 是否被任一祖先目录折叠隐藏（用分隔符判定，避免 notes 误伤 notes2） */
@@ -85,36 +87,6 @@
     }
     return true;
   }
-
-  /**
-   * 把片段按关键词切成「命中 / 非命中」两段式，交给模板逐段渲染。
-   * 刻意不用 {@html} —— 片段来自文件内容，拼 HTML 就是把用户的文档当模板执行。
-   */
-  function segments(text: string, q: string): { t: string; hit: boolean }[] {
-    const plain = [{ t: text, hit: false }];
-    const needle = q.trim();
-    if (!needle) return plain;
-
-    const low = text.toLowerCase();
-    const pin = needle.toLowerCase();
-    const out: { t: string; hit: boolean }[] = [];
-    let from = 0;
-
-    for (;;) {
-      const i = low.indexOf(pin, from);
-      if (i < 0) break;
-      if (i > from) out.push({ t: text.slice(from, i), hit: false });
-      out.push({ t: text.slice(i, i + pin.length), hit: true });
-      from = i + pin.length;
-    }
-    if (from < text.length) out.push({ t: text.slice(from), hit: false });
-    return out.length > 0 ? out : plain;
-  }
-
-  // 切到搜索页签即聚焦，Ctrl+F 之后可以直接打字
-  $effect(() => {
-    if (mode === 'search') searchInput?.focus();
-  });
 
   const fileCount = $derived(tree.filter((n) => n.kind === 'file').length);
   const dirCount = $derived(tree.filter((n) => n.kind === 'dir').length);
@@ -169,12 +141,15 @@
         {#if treeState === 'ready'}{dirCount} 个目录 · {fileCount} 篇文档{:else if treeState === 'loading'}正在扫描…{:else}&nbsp;{/if}
       </p>
     {/if}
-  {:else if mode === 'search'}
-    <div class="ws-head">
-      <div class="ws-head__main ws-head__main--static">
-        <Icon name="search" size={14} />
-        <span class="ws-head__name">{scope === 'workspace' ? '工作区搜索' : '文档搜索'}</span>
-      </div>
+  {:else if mode === 'history'}
+    <div class="hist-bar">
+      <span class="hist-bar__t">最近打开</span>
+      <button
+        class="hist-bar__clear"
+        type="button"
+        onclick={onClearHistory}
+        disabled={history.length === 0}
+      >清空</button>
     </div>
   {/if}
 
@@ -263,91 +238,39 @@
         </nav>
       {/if}
 
-    <!-- ---------------- 搜索 ---------------- -->
+    <!-- ---------------- 历史 ---------------- -->
     {:else}
-      <div class="search-input">
-        <Icon name="search" size={13} />
-        <input
-          bind:this={searchInput}
-          type="search"
-          placeholder={scope === 'workspace' ? '搜索工作区内全部文档' : '搜索已打开的文档'}
-          aria-label="全文搜索"
-          value={query}
-          oninput={(e) => onQuery((e.currentTarget as HTMLInputElement).value)}
-          onkeydown={(e) => { if (e.key === 'Escape') onQuery(''); }}
-        />
-        {#if searchState === 'loading'}
-          <span class="search-input__spin" aria-label="搜索中"></span>
-        {:else if query}
-          <button
-            class="search-input__clear"
-            type="button"
-            aria-label="清空搜索"
-            title="清空"
-            onclick={() => onQuery('')}
-          >
-            <Icon name="close" size={10} />
-          </button>
-        {/if}
-      </div>
-
-      <p class="search-meta">
-        {#if !query.trim()}
-          {scope === 'workspace' ? '跨整个工作区检索，含未打开的文档' : '输入关键词，跨已打开文档检索'}
-        {:else if searchState === 'loading'}
-          正在搜索…
-        {:else if searchState === 'error'}
-          搜索失败，请重试
-        {:else if groups.length === 0}
-          没有匹配。搜索基于纯文本，不区分大小写
-        {:else}
-          {searchInfo?.totalMatches ?? 0} 处命中 · {groups.length} 个文件
-          {#if searchInfo?.truncated}（已截断）{/if}
-        {/if}
-      </p>
-
-      {#if searchInfo?.truncated}
-        <p class="search-warn">
-          命中过多，仅显示前 {searchInfo.totalMatches} 条 —— 换个更具体的关键词
-        </p>
-      {/if}
-
-      <div class="search-results">
-        {#each groups as g (g.path || g.name)}
-          {@const key = g.path || g.name}
-          <section class="grp" class:is-current={!!g.path && normalizePath(g.path) === normalizePath(activePath)}>
+      {#if history.length === 0}
+        <div class="empty">
+          <p class="empty__t">还没有打开过文档</p>
+          <p class="empty__d">打开过的 Markdown 会留在这里，下次一点就能回到上次读的那份。</p>
+        </div>
+      {:else}
+        <div class="hist-list">
+          {#each history as h (h.path)}
             <button
-              class="grp__head"
+              class="hist"
+              class:is-missing={h.missing}
+              class:is-current={!h.missing && normalizePath(h.path) === normalizePath(activePath)}
               type="button"
-              aria-expanded={!collapsedGroups[key]}
-              onclick={() => toggleGroup(key)}
+              disabled={h.missing}
+              title={h.missing ? `${h.path}\n文件已不存在` : h.path}
+              onclick={() => onOpenHistory(h)}
             >
-              <Icon name={collapsedGroups[key] ? 'chevronRight' : 'chevronDown'} size={11} />
-              <Icon name="doc" size={12} />
-              <span class="grp__name" title={g.path || g.name}>{g.name}</span>
-              <span class="grp__count">{g.total}</span>
-            </button>
-
-            {#if g.relPath && g.relPath !== g.name}
-              <p class="grp__path" title={g.relPath}>{g.relPath}</p>
-            {/if}
-
-            {#if !collapsedGroups[key]}
-              {#each g.hits as h (h.line + ':' + h.ordinal)}
-                <button class="hit" type="button" title={`第 ${h.line} 行`} onclick={() => onHit(h)}>
-                  <span class="hit__ln">{h.line}</span>
-                  <span class="hit__s">
-                    {#each segments(h.snippet, query) as seg}{#if seg.hit}<mark>{seg.t}</mark>{:else}{seg.t}{/if}{/each}
-                  </span>
-                </button>
-              {/each}
-              {#if g.total > g.hits.length}
-                <p class="grp__more">该文件另有 {g.total - g.hits.length} 处未列出</p>
+              <Icon name="doc" size={13} />
+              <span class="hist__body">
+                <span class="hist__name">{h.name}</span>
+                <span class="hist__parent">{parentOf(h.path)}</span>
+              </span>
+              {#if h.missing}
+                <span class="hist__tag">已不存在</span>
+              {:else}
+                <span class="hist__time">{h.time}</span>
               {/if}
-            {/if}
-          </section>
-        {/each}
-      </div>
+            </button>
+          {/each}
+        </div>
+      {/if}
     {/if}
   </div>
 </aside>
@@ -372,8 +295,6 @@
     text-align: left;
   }
   .ws-head__main:hover { background: var(--mr-surface-track); }
-  .ws-head__main--static { cursor: default; }
-  .ws-head__main--static:hover { background: transparent; }
   .ws-head__name {
     font: 500 12.5px var(--mr-font-sans);
     color: var(--mr-text-3);
@@ -444,134 +365,101 @@
   /* ---------- 树行 ---------- */
   .trow--file { padding-left: 18px; }
 
-  /* ---------- 搜索框附加件 ---------- */
-  .search-input__spin {
-    flex: none;
-    width: 11px;
-    height: 11px;
-    border: 1.5px solid var(--mr-border-strong);
-    border-top-color: var(--mr-accent);
-    border-radius: 50%;
-    animation: spin 700ms linear infinite;
-  }
-  .search-input__clear {
-    flex: none;
-    width: 18px;
-    height: 18px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    color: var(--mr-text-5);
-  }
-  .search-input__clear:hover { background: var(--mr-surface-track); color: var(--mr-text-1); }
-
-  .search-warn {
-    margin: 8px 2px 0;
-    padding: 6px 8px;
-    border-radius: var(--mr-radius-sm);
-    background: color-mix(in srgb, var(--mr-warn, #b89968) 12%, transparent);
-    font: 400 10.5px/1.6 var(--mr-font-sans);
-    color: var(--mr-text-3);
-  }
-
-  /* ---------- 搜索结果 ---------- */
-  .search-results {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 10px;
-  }
-
-  .grp { margin-bottom: 2px; }
-
-  .grp__head {
+  /* ---------- 历史 ---------- */
+  .hist-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: space-between;
+    height: 22px;
+    padding: 0 4px;
+    flex: none;
+  }
+  .hist-bar__t {
+    font: 500 11px var(--mr-font-sans);
+    color: var(--mr-text-4);
+    letter-spacing: 0.02em;
+  }
+  .hist-bar__clear {
+    padding: 2px 5px;
+    border-radius: var(--mr-radius-xs);
+    font: 400 11px var(--mr-font-sans);
+    color: var(--mr-text-5);
+  }
+  .hist-bar__clear:hover:not(:disabled) {
+    background: var(--mr-surface-track);
+    color: var(--mr-text-2);
+  }
+  .hist-bar__clear:disabled { opacity: 0.45; cursor: default; }
+
+  .hist-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-top: 4px;
+  }
+
+  .hist {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
-    height: 26px;
-    padding: 0 6px 0 2px;
+    padding: 6px 6px 6px 4px;
     border-radius: var(--mr-radius-sm);
+    border-left: 2px solid transparent;
     text-align: left;
     color: var(--mr-text-4);
   }
-  .grp__head:hover { background: var(--mr-surface-track); }
-  .grp__name {
-    flex: 1;
-    min-width: 0;
-    font: 500 12px var(--mr-font-sans);
-    color: var(--mr-text-1);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .grp.is-current .grp__name { color: var(--mr-accent); }
-  .grp__count {
-    flex: none;
-    font: 400 10px var(--mr-font-mono);
-    color: var(--mr-text-5);
-  }
-
-  .grp__path {
-    margin: 0 0 3px 27px;
-    font: 400 10.5px var(--mr-font-sans);
-    color: var(--mr-text-5);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .hit {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: var(--mr-radius-sm);
-    text-align: left;
-    border-left: 2px solid transparent;
-  }
-  .hit:hover {
+  .hist:hover:not(:disabled) {
     background: var(--mr-surface-track);
     border-left-color: var(--mr-accent);
   }
-  .hit__ln {
-    flex: none;
-    width: 26px;
-    padding-top: 1px;
-    text-align: right;
-    font: 400 10px var(--mr-font-mono);
-    color: var(--mr-text-5);
-  }
-  .hit__s {
+  .hist:hover:not(:disabled) .hist__name { color: var(--mr-text-1); }
+
+  .hist__body {
     flex: 1;
     min-width: 0;
-    font: 400 11.5px/1.55 var(--mr-font-sans);
-    color: var(--mr-text-3);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .hist__name {
+    font: 500 12px var(--mr-font-sans);
+    color: var(--mr-text-2);
     overflow: hidden;
-    word-break: break-word;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .hit__s :global(mark) {
-    /*
-      和画布色混合而不是与 transparent 混合：侧栏是密集的小字号文本，
-      纯透明叠加出来的底色在米白背景上几乎看不见。混进画布色后，
-      亮暗两套主题下都能得到确定、够看的对比度。
-    */
-    background: color-mix(in srgb, var(--mr-accent) 22%, var(--mr-canvas));
-    color: var(--mr-accent);
-    font-weight: 500;
-    border-radius: 2px;
-    padding: 0 1px;
-  }
-
-  .grp__more {
-    margin: 2px 0 4px 42px;
-    font: 400 10.5px var(--mr-font-sans);
+  .hist__parent {
+    font: 400 10px var(--mr-font-mono);
     color: var(--mr-text-5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hist__time {
+    flex: none;
+    font: 400 10px var(--mr-font-mono);
+    color: var(--mr-text-6);
+  }
+  .hist.is-current .hist__name { color: var(--mr-accent); }
+
+  /*
+    文件已删除：整行沉到 6 级灰。不给 hover 任何反馈，是因为它现在
+    只是一条"说明"而不是可点的东西 —— 让它有一点点像按钮都是在骗点击。
+  */
+  .hist.is-missing { cursor: default; }
+  .hist.is-missing .hist__name,
+  .hist.is-missing .hist__parent { color: var(--mr-text-6); }
+  .hist.is-missing .hist__parent { opacity: 0.7; }
+
+  .hist__tag {
+    flex: none;
+    padding: 1px 5px;
+    border: 1px solid var(--mr-border);
+    border-radius: var(--mr-radius-xs);
+    font: 400 9.5px var(--mr-font-sans);
+    color: var(--mr-text-5);
+    letter-spacing: 0.02em;
   }
 
   /* ---------- 其余复用 app.css ---------- */

@@ -1,0 +1,107 @@
+{
+  "width": 1200,
+  "total": 20,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "侧栏页签变成 文件 / 大纲 / 历史",
+      "ok": true,
+      "detail": "[\"文件\",\"大纲\",\"历史\"]"
+    },
+    {
+      "name": "侧栏里已经没有搜索入口",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "5 篇都打开了（每篇一个标签）",
+      "ok": true,
+      "detail": "标签数 5"
+    },
+    {
+      "name": "历史列出了刚打开的 5 篇",
+      "ok": true,
+      "detail": "5 条：doc-5.md / doc-4.md / doc-3.md / doc-2.md / doc-1.md"
+    },
+    {
+      "name": "最近打开的排最前",
+      "ok": true,
+      "detail": "第一项 doc-5.md"
+    },
+    {
+      "name": "每一项都带父目录",
+      "ok": true,
+      "detail": "temp/moread-ws-history | temp/moread-ws-history | temp/moread-ws-history | temp/moread-ws-"
+    },
+    {
+      "name": "每一项都带相对时间",
+      "ok": true,
+      "detail": "刚刚 | 刚刚 | 刚刚 | 刚刚 | 刚刚"
+    },
+    {
+      "name": "当前打开的那篇被标出来",
+      "ok": true,
+      "detail": "is-current"
+    },
+    {
+      "name": "目录记录没有混进历史（只有文件）",
+      "ok": true,
+      "detail": "doc-5.md,doc-4.md,doc-3.md,doc-2.md,doc-1.md"
+    },
+    {
+      "name": "被删的那篇还在列表里（不是直接消失）",
+      "ok": true,
+      "detail": "找到 true"
+    },
+    {
+      "name": "被删的那篇标为 is-missing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "被删的那篇不可点击（disabled）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "被删的那篇显示\"已不存在\"",
+      "ok": true,
+      "detail": "已不存在"
+    },
+    {
+      "name": "其余条目仍然可点",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "点被删的那一项不会打开任何东西",
+      "ok": true,
+      "detail": "1→1 标签，当前 doc-1.md"
+    },
+    {
+      "name": "点历史条目会切到那篇文档",
+      "ok": true,
+      "detail": "点了 doc-5.md，当前 doc-5.md"
+    },
+    {
+      "name": "清空后一条都不剩",
+      "ok": true,
+      "detail": "0 条"
+    },
+    {
+      "name": "清空后给出空态说明",
+      "ok": true,
+      "detail": "还没有打开过文档"
+    },
+    {
+      "name": "清空立刻写回 localStorage",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "刷新后旧记录没有回来（只剩自动打开的那篇）",
+      "ok": true,
+      "detail": "1 条：doc-1.md"
+    }
+  ]
+}

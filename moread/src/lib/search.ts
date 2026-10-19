@@ -141,3 +141,30 @@ export function searchInText(
 
   return { matches, count };
 }
+
+/**
+ * 把片段按关键词切成「命中 / 非命中」两段式，交给模板逐段渲染。
+ *
+ * 刻意不用 {@html} —— 片段来自用户的文件内容，拼 HTML 等于把文档当模板执行。
+ * 大小写按 `toLowerCase` 对齐，与 `searchInText` 的匹配口径一致。
+ */
+export function segments(text: string, q: string): { t: string; hit: boolean }[] {
+  const plain = [{ t: text, hit: false }];
+  const needle = q.trim();
+  if (!needle) return plain;
+
+  const low = text.toLowerCase();
+  const pin = needle.toLowerCase();
+  const out: { t: string; hit: boolean }[] = [];
+  let from = 0;
+
+  for (;;) {
+    const i = low.indexOf(pin, from);
+    if (i < 0) break;
+    if (i > from) out.push({ t: text.slice(from, i), hit: false });
+    out.push({ t: text.slice(i, i + pin.length), hit: true });
+    from = i + pin.length;
+  }
+  if (from < text.length) out.push({ t: text.slice(from), hit: false });
+  return out.length > 0 ? out : plain;
+}

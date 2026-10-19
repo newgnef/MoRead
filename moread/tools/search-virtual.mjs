@@ -37,18 +37,18 @@ function check(name, ok, detail) {
 /** 输入关键词并等结果稳定 */
 async function search(cdp, keyword) {
   await cdp.eval(`(() => {
-    const input = document.querySelector('.search-input input');
+    const input = document.querySelector('.sp__input input');
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
     setter.call(input, ${JSON.stringify(keyword)});
     input.dispatchEvent(new Event('input', { bubbles: true }));
     return true;
   })()`);
   await sleep(300);
-  await waitFor(cdp, `document.querySelectorAll('.grp').length > 0`, {
+  await waitFor(cdp, `document.querySelectorAll('.sp .grp').length > 0`, {
     label: `「${keyword}」的结果`, timeoutMs: 20000, intervalMs: 200,
   });
   return cdp.eval(`(() => {
-    const g = [...document.querySelectorAll('.grp')]
+    const g = [...document.querySelectorAll('.sp .grp')]
       .find((x) => x.querySelector('.grp__name')?.textContent === ${JSON.stringify(FILE)});
     if (!g) return null;
     return {
@@ -65,7 +65,7 @@ async function search(cdp, keyword) {
 async function clickHit(cdp, keyword, idx) {
   await search(cdp, keyword);
   const clicked = await cdp.eval(`(() => {
-    const g = [...document.querySelectorAll('.grp')]
+    const g = [...document.querySelectorAll('.sp .grp')]
       .find((x) => x.querySelector('.grp__name')?.textContent === ${JSON.stringify(FILE)});
     const hits = [...g.querySelectorAll('.hit')];
     if (!hits[${idx}]) return { ok: false, total: hits.length };
@@ -140,13 +140,14 @@ await waitFor(cdp, `document.querySelectorAll('.trow--file').length > 0`, {
   label: '文件树就绪', timeoutMs: 20000,
 });
 
-// 切到搜索页签
-await cdp.eval(`(() => {
-  const b = [...document.querySelectorAll('.sidebar__tab')].find((x) => x.textContent.trim() === '搜索');
-  b?.click();
-  return !!b;
+// 打开右侧搜索栏（默认「所有标签」就够用：目标文档已经打开）
+await cdp.eval(`(async () => {
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+  document.querySelector('.icon-btn[aria-label="搜索"]')?.click();
+  await wait(320);
+  return !!document.querySelector('.sp__input input');
 })()`);
-await sleep(250);
+await sleep(200);
 
 /* ---------- 1. 深处唯一命中 ---------- */
 const DEEP = 'Section1000Plugin';
