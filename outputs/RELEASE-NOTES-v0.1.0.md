@@ -9,9 +9,14 @@ Windows 上只读的 Markdown 阅读器。打开文件夹，读，然后关掉�
 | 文件 | 大小 | 适合 |
 |---|---|---|
 | `MoRead_0.1.0_x64-setup.exe` | 2.69 MiB | **推荐**。装完双击 `.md` 直接打开；从"应用和功能"可正常卸载 |
-| `MoRead-免安装版.exe` | 5.05 MiB | 单文件直跑，不写注册表、不抢默认程序。放 U 盘也能用 |
+| `MoRead-0.1.0-x64-portable.exe` | 5.05 MiB | 单文件直跑，不写注册表、不抢默认程序。放 U 盘也能用 |
 
 两者功能完全一致，差别只在有没有写文件关联和卸载项。
+
+> 两个附件都用纯 ASCII 文件名。GitHub 上传时会**滤掉 asset name 里的非 ASCII 字符**——
+> 本地叫 `MoRead-免安装版.exe`，传上去会变成 `MoRead-.exe`（中文整段消失）。
+> 这不只是难看：中文名在各种下载器、`curl -O`、命令行环境里都会变成乱码。
+> 中文说明放在这里，文件名留给机器。
 
 **系统要求**：Windows 10 1803+ / Windows 11，x64。WebView2 运行时是系统自带的（1803 之后默认预装），不需要另装 .NET 或 Node。
 
@@ -21,7 +26,7 @@ Windows 上只读的 Markdown 阅读器。打开文件夹，读，然后关掉�
 
 ```
 69b4728b0497c24bf907d15e2e2695cd0c44632780e70f71db35d505e1c87134  MoRead_0.1.0_x64-setup.exe
-6c0ad3774c6ef87a24a0134d5cf35a03d684e3cef491f11f38f40895559098b7  MoRead-免安装版.exe
+6c0ad3774c6ef87a24a0134d5cf35a03d684e3cef491f11f38f40895559098b7  MoRead-0.1.0-x64-portable.exe
 ```
 
 PowerShell 一行：

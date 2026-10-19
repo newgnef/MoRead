@@ -11,7 +11,7 @@
 | 文件 | 大小 | 说明 |
 |---|---|---|
 | `MoRead_0.1.0_x64-setup.exe` | 2.69 MiB | 安装版，装完双击 `.md` 直接打开 |
-| `MoRead-免安装版.exe` | 5.05 MiB | 单文件直跑，不写注册表、不抢默认程序 |
+| `MoRead-0.1.0-x64-portable.exe` | 5.05 MiB | 单文件直跑，不写注册表、不抢默认程序 |
 
 Windows 10 1803+ / 11，x64。WebView2 系统自带，无需另装运行时。
 也可从源码跑：`cd moread && npm install && npm run preview`。
